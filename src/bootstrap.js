@@ -3,8 +3,9 @@
      * Extract host infos from the location.
      * Example: "?_host_Info=Powerpoint|Win32|16.01|en-US"
      */
-    const [client, os, version, locale] =
-        window.location.search.split('=')[1].split('|');
+     var [client, os, version, locale];
+
+    //[client, os, version, locale ] =   window.location.search.split('=')[1].split('|');
 
 
     Office.initialize = () => {
