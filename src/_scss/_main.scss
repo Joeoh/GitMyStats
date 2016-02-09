@@ -1,0 +1,26 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    @include ms-bgColor-neutralLighter;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    overflow: hidden;
+    background-color: red;
+}
+
+form {
+    @include placeholder-color($ms-color-neutralTertiary);
+    transform: scale(1.5);
+    width: 180px;
+
+    button[type="submit"] {
+        margin-top: 5px;
+        width: 100%;
+    }
+}

@@ -1,0 +1,60 @@
+/*
+  Your use of the content in the files referenced here are subject to the terms of the license at http://aka.ms/fabric-font-license
+*/
+.host-button .ms-Button-label,
+.host-button:focus .ms-Button-label,
+.host-button:hover .ms-Button-label {
+  color: white; }
+
+.word .host-button {
+  background-color: #0078d7;
+  border-color: #0078d7; }
+  .word .host-button:focus, .word .host-button:hover {
+    background-color: #002050;
+    border-color: #002050; }
+
+.excel .host-button {
+  background-color: #107c10;
+  border-color: #107c10; }
+  .excel .host-button:focus, .excel .host-button:hover {
+    background-color: #004b1c;
+    border-color: #004b1c; }
+
+.powerpoint .host-button {
+  background-color: #d83b01;
+  border-color: #d83b01; }
+  .powerpoint .host-button:focus, .powerpoint .host-button:hover {
+    background-color: #a80000;
+    border-color: #a80000; }
+
+.hidden {
+  display: none; }
+
+html,
+body {
+  height: 100%;
+  width: 100%; }
+
+body {
+  background-color: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  overflow: hidden;
+  background-color: red; }
+
+form {
+  transform: scale(1.5);
+  width: 180px; }
+  form :placeholder-shown {
+    color: #a6a6a6; }
+  form :-ms-input-placeholder {
+    color: #a6a6a6; }
+  form ::-moz-placeholder {
+    color: #a6a6a6; }
+  form ::-webkit-input-placeholder {
+    color: #a6a6a6; }
+  form button[type="submit"] {
+    margin-top: 5px;
+    width: 100%; }
