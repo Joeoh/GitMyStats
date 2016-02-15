@@ -1,6 +1,6 @@
-var gh3 = new Gh3.User("k33g");
-gh3.fetch(function (err, resUser){
+var gh3 = new Gh3.User("joeoh");
+gh3.fetch(function (err, user){
     if(err)
-        throw "outch ..."
-    console.log("User: ", resUser);
+        throw "error in gh3.fetch"
+    console.log("User: ", user);
 });
