@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "jquery": "~2.2.0",
-    "office-ui-fabric": "~1.2.1"
+    "office-ui-fabric": "~1.2.1",
+    "gh3": "^1.0.3"
   }
 }
