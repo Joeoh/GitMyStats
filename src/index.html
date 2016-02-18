@@ -22,16 +22,56 @@
     <!-- endbuild -->
 </head>
 <body>
+    <div class="ms-Spinner"></div>
     <form id="form">
         <div class="ms-TextField">
             <label class="ms-Label">Message</label>
-            <input type="text" id="text" placeholder="e.g. Hello World" class="ms-TextField-field">
+            <input  id="username" placeholder="e.g. Joeoh" class="ms-TextField-field">
         </div>
-        <button type="submit" class="ms-Button host-button">
+        <button id="usernameSubmit" class="ms-Button host-button">
             <span class="ms-Button-label">Insert</span>
         </button>
     </form>
 
+    <div id="errorModal" class="ms-Dialog ms-Dialog--lgHeader excel hidden">
+        <div class="ms-Overlay"></div>
+        <div class="ms-Dialog-main">
+            <button class="ms-Dialog-button ms-Dialog-button--close"><i class="ms-Icon ms-Icon--x"></i></button>
+            <div class="ms-Dialog-header">
+                <p id="errorTitle" class="ms-Dialog-title">
+
+                </p>
+            </div>
+            <div class="ms-Dialog-inner">
+                <div class="ms-Dialog-content">
+                    <p id="errorBody" class="ms-Dialog-subText">
+
+                    </p>
+                </div>
+                <div class="ms-Dialog-actions">
+                    <div class="ms-Dialog-actionsRight">
+                        <button id="errorClose" class="ms-Dialog-action ms-Button"><span class="ms-Button-label">Got it</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Components to display -->
+    <div class="hidden">
+        <table border="1px solid black" id="userTable">
+            <tr>
+                <td>Username</td>
+                <td>Name</td>
+                <td>Date Joined</td>
+            </tr>
+            <tr>
+                <td>Bush</td>
+                <td>Did</td>
+                <td>9/11</td>
+            </tr>
+        </table>
+    </div>
     <!-- build:js app.js -->
     <!-- inject:js -->
     <!-- endinject -->
