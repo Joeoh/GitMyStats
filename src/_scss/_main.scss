@@ -11,6 +11,12 @@ body {
     justify-content: center;
     margin: 0;
     overflow: hidden;
+
+    #mainView {
+        overflow: scroll;
+        height: 50%;
+        width: 30%;
+    }
 }
 
 form {
