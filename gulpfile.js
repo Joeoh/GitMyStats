@@ -21,7 +21,8 @@ const glob = {
     html   : '**/*.html',
     js     : '**/*.js',
     scss   : '**/*.scss',
-    css    : '**/*.css'
+    css    : '**/*.css',
+    test   : '**/test-*.*'
 };
 
 // paths to certain parts of the project
@@ -156,7 +157,7 @@ gulp.task('ship', ['ship-build'], () => {
 });
 
 gulp.task('mocha', function() {
-  return gulp.src(['test/test-*.js'], { read: false })
+  return gulp.src([path.test + glob.test], { read: false })
     .pipe(mocha({
       globals: {
         should: require('should')
