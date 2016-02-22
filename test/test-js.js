@@ -15,6 +15,7 @@ describe("testing something asynchronously", function() {
       response.email.should.equal("barischj@tcd.ie")
       done();
     }).fail(function() {
+      true.should.be.false
       done();
     })
   });
