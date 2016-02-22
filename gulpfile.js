@@ -14,7 +14,7 @@ const babel       = require('gulp-babel'),
       util        = require('gulp-util'),
       wiredep     = require('wiredep').stream;
 
-
+// path regexes to match certain file types
 const glob = {
     all    : '**/*',
     assets : 'assets/**/*',
@@ -24,6 +24,7 @@ const glob = {
     css    : '**/*.css'
 };
 
+// paths to certain parts of the project
 const path = {
     src   : 'src/',
     debug : 'debug/',
@@ -33,7 +34,7 @@ const path = {
     test  : 'test/'
 };
 
-// Cleans the debug/ and ship/ folders
+// Clean the debug/ and ship/ folders
 gulp.task('clean', () =>
     gulp.src([ path.debug, path.ship ])
         .pipe(rimraf())
@@ -60,7 +61,7 @@ gulp.task('script', () =>
 );
 
 // Compiles the styles (css)
-gulp.task('style', () =>
+gulp.task('compile-css', () =>
     gulp.src(path.src + '_scss/style.scss')
         .pipe(plumber())
         .pipe(sass({
@@ -73,7 +74,7 @@ gulp.task('style', () =>
 );
 
 // Injects compiled scripts and styles, as well as all dependencies into index.html
-gulp.task('index', ['markup', 'script', 'style'], () => {
+gulp.task('inject', ['markup', 'script', 'compile-css'], () => {
     const sources = gulp.src(
         [ path.debug + glob.js, path.debug + glob.css ],
         { read: false }
@@ -85,8 +86,8 @@ gulp.task('index', ['markup', 'script', 'style'], () => {
         .pipe(gulp.dest(path.debug));
 });
 
-// Debug build of the web application
-gulp.task('build', ['assets', 'index', 'mocha']);
+// Run tests and create a debug build of the web application
+gulp.task('build', ['assets', 'inject', 'mocha']);
 
 // Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
@@ -101,12 +102,11 @@ gulp.task('serve', ['build'], () => {
     });
 
     gulp.watch(path.src + glob.scss, ['bs-stream'])
-    gulp.watch([path.src + glob.html, path.src + glob.js], ['bs-reload']);
-    gulp.watch([path.src + glob.js, path.test + glob.js], ['mocha']);
+    gulp.watch([path.src + glob.html, path.src + glob.js, path.test + glob.js], ['bs-reload']);
 });
 
 // Streams style changes to Browsersync clients
-gulp.task('bs-stream', ['style'], () =>
+gulp.task('bs-stream', ['compile-css'], () =>
     gulp.src(path.debug + glob.css)
         .pipe(browserSync.stream())
 );
