@@ -5,6 +5,7 @@ const babel       = require('gulp-babel'),
       htmlmin     = require('gulp-htmlmin'),
       inject      = require('gulp-inject'),
       minifyCss   = require('gulp-minify-css'),
+      mocha       = require('gulp-mocha'),
       plumber     = require('gulp-plumber'),
       rimraf      = require('gulp-rimraf'),
       sass        = require('gulp-sass'),
@@ -12,6 +13,7 @@ const babel       = require('gulp-babel'),
       usemin      = require('gulp-usemin'),
       util        = require('gulp-util'),
       wiredep     = require('wiredep').stream;
+
 
 const glob = {
     all    : '**/*',
@@ -27,7 +29,8 @@ const path = {
     debug : 'debug/',
     ship  : 'ship/',
     bower : 'bower_components/',
-    ftp   : '/site/wwwroot' // Azure Web App
+    ftp   : '/site/wwwroot', // Azure Web App
+    test  : 'test/'
 };
 
 // Cleans the debug/ and ship/ folders
@@ -83,7 +86,7 @@ gulp.task('index', ['markup', 'script', 'style'], () => {
 });
 
 // Debug build of the web application
-gulp.task('build', ['assets', 'index']);
+gulp.task('build', ['assets', 'index', 'mocha']);
 
 // Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
@@ -99,6 +102,7 @@ gulp.task('serve', ['build'], () => {
 
     gulp.watch(path.src + glob.scss, ['bs-stream'])
     gulp.watch([path.src + glob.html, path.src + glob.js], ['bs-reload']);
+    gulp.watch([path.src + glob.js, path.test + glob.js], ['mocha']);
 });
 
 // Streams style changes to Browsersync clients
@@ -149,6 +153,15 @@ gulp.task('ship', ['ship-build'], () => {
     gulp.src(path.ship + glob.all, { buffer: false })
         .pipe(conn.newer(path.ftp)) // only upload newer files
         .pipe(conn.dest(path.ftp));
+});
+
+gulp.task('mocha', function() {
+  return gulp.src(['test/test-*.js'], { read: false })
+    .pipe(mocha({
+      globals: {
+        should: require('should')
+      }
+    }));
 });
 
 // When gulp is executed without args, run the serve task
