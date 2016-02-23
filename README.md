@@ -1,5 +1,7 @@
 # git-my-stats
 [![Build Status](https://travis-ci.org/Joeoh/GitMyStats.svg?branch=master)](https://travis-ci.org/Joeoh/GitMyStats)
+[![devDependency Status](https://david-dm.org/Joeoh/GitMyStats/dev-status.svg)](https://david-dm.org/Joeoh/GitMyStats#info=devDependencies)
+
 
 ## Setup
 ### Prerequisites
