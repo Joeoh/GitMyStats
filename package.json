@@ -1,17 +1,6 @@
 {
-  "name": "office-addin-base",
+  "name": "git-my-stats",
   "version": "1.0.0",
-  "description": "An opinionated base project for building Office Add-ins",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/patbuergin/office-addin-base.git"
-  },
-  "author": "patbuergin",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/patbuergin/office-addin-base/issues"
-  },
-  "homepage": "https://github.com/patbuergin/office-addin-base",
   "devDependencies": {
     "babel-preset-es2015": "6.3.13",
     "browser-sync": "2.11.1",
@@ -20,12 +9,15 @@
     "gulp-htmlmin": "1.3.0",
     "gulp-inject": "3.0.0",
     "gulp-minify-css": "1.2.3",
+    "gulp-mocha": "^2.2.0",
     "gulp-plumber": "1.0.1",
     "gulp-rimraf": "0.2.0",
     "gulp-sass": "2.1.0",
     "gulp-uglify": "1.5.2",
     "gulp-usemin": "0.3.20",
     "gulp-util": "3.0.7",
+    "jquery-browserify": "^1.8.1",
+    "should": "^8.2.2",
     "vinyl-ftp": "^0.4.5",
     "wiredep": "3.0.0"
   }
