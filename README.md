@@ -1,5 +1,5 @@
 # git-my-stats
-[![Build Status](https://travis-ci.org/barischj/travis-test.svg?branch=master)](https://travis-ci.org/barischj/travis-test)
+[![Build Status](https://travis-ci.org/Joeoh/GitMyStats.svg?branch=master)](https://travis-ci.org/Joeoh/GitMyStats)
 
 ## Setup
 ### Prerequisites
