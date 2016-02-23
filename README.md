@@ -1,4 +1,5 @@
 # git-my-stats
+[![Build Status](https://travis-ci.org/barischj/travis-test.svg?branch=master)](https://travis-ci.org/barischj/travis-test)
 
 ## Setup
 ### Prerequisites
