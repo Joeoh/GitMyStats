@@ -1,6 +1,6 @@
 var jsdom = require("jsdom");
 var window = jsdom.jsdom().defaultView;
-var $ = require("jQuery")(window)
+var $ = require("jquery")(window)
 
 describe("testing something synchronously", function() {
   it("should do X", function() {
