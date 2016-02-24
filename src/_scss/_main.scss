@@ -12,19 +12,14 @@ body {
     margin: 0;
     overflow: hidden;
 
-    #mainView {
-        overflow: scroll;
-        height: 80%;
-        width: 80%;
-    }
 }
 
 form {
     @include placeholder-color($ms-color-neutralTertiary);
     transform: scale(1.5);
     width: 180px;
-
     button {
+
         margin-top: 5px;
         width: 100%;
     }
