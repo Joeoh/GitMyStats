@@ -1,6 +1,18 @@
 var officeApp = angular.module("officeApp", ['ngRoute', 'officeAppControllers']);
 var officeAppControllers = angular.module('officeAppControllers', []);
 
+const client = window.location.search.split('=')[2].split('|')[0];
+const os = window.location.search.split('=')[2].split('|')[1];
+const version = window.location.search.split('=')[2].split('|')[2];
+const locale = window.location.search.split('=')[2].split('|')[3];
+
+Office.initialize = () => {
+    $('body').addClass(client.toLowerCase());
+    $("#usernameSubmit").click(function () {
+        onSubmit();
+    });
+};
+
 officeApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.when('/repos/:user', {
