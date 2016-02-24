@@ -14,7 +14,7 @@ const babel       = require('gulp-babel'),
       util        = require('gulp-util'),
       wiredep     = require('wiredep').stream;
 
-// path regexes to match certain file types
+// path regexes to match certain file groups
 const glob = {
     all    : '**/*',
     assets : 'assets/**/*',
@@ -22,10 +22,10 @@ const glob = {
     js     : '**/*.js',
     scss   : '**/*.scss',
     css    : '**/*.css',
-    test   : '**/test-*.*'
+    test   : '**/test-*.js'
 };
 
-// paths to certain parts of the project
+// useful paths to parts of the project
 const path = {
     src   : 'src/',
     debug : 'debug/',
@@ -156,14 +156,11 @@ gulp.task('ship', ['ship-build'], () => {
         .pipe(conn.dest(path.ftp));
 });
 
+// Run tests with `mocha`
 gulp.task('mocha', function() {
   return gulp.src([path.test + glob.test], { read: false })
-    .pipe(mocha({
-      globals: {
-        should: require('should')
-      }
-    }));
+    .pipe(mocha({timeout: 5000}));
 });
 
-// When gulp is executed without args, run the serve task
+// When gulp is executed without args run the serve task
 gulp.task('default', ['serve']);
