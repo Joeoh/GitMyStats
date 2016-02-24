@@ -26,12 +26,12 @@ var get = function(url, onsuccess, onfail) {
 
 var github = {
   // GET /users/:username
-  "user": function(username, onsuccess, onfail) {
+  user: function(username, onsuccess, onfail) {
     get("https://api.github.com/users/" + username, onsuccess, onfail);
   },
   // GET /repos/:owner/:repo/collaborators
-  "collaborators": function(owner, repo, onsuccess, onfail) {
-    get("https://api.github.com/repos/" + owner + "/" + repo + "/collaborators", onsuccess, onfail);
+  commits: function(owner, repo, onsuccess, onfail) {
+    get("https://api.github.com/repos/" + owner + "/" + repo + "/commits", onsuccess, onfail);
   }
 };
 
