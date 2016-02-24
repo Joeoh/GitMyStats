@@ -22,7 +22,7 @@ const glob = {
     js     : '**/*.js',
     scss   : '**/*.scss',
     css    : '**/*.css',
-    mocha  : '**/mocha-*.js'
+    test   : '**/test-*.js'
 };
 
 // useful paths to parts of the project
@@ -156,10 +156,11 @@ gulp.task('ship', ['ship-build'], () => {
         .pipe(conn.dest(path.ftp));
 });
 
+// Run tests with `mocha`
 gulp.task('mocha', function() {
-  return gulp.src([path.test + glob.mocha], { read: false })
+  return gulp.src([path.test + glob.test], { read: false })
     .pipe(mocha());
 });
 
-// When gulp is executed without args, run the serve task
+// When gulp is executed without args run the serve task
 gulp.task('default', ['serve']);
