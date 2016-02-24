@@ -159,7 +159,7 @@ gulp.task('ship', ['ship-build'], () => {
 // Run tests with `mocha`
 gulp.task('mocha', function() {
   return gulp.src([path.test + glob.test], { read: false })
-    .pipe(mocha());
+    .pipe(mocha({timeout: 5000}));
 });
 
 // When gulp is executed without args run the serve task
