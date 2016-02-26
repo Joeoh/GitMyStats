@@ -1,9 +1,6 @@
-# office-addin-base
-[![devDependency Status](https://david-dm.org/patbuergin/office-addin-base/dev-status.svg)](https://david-dm.org/patbuergin/office-addin-base#info=devDependencies)
-
-A base project for rapidly building [Office Add-ins](http://dev.office.com/getting-started/addins) with [Babel](http://babeljs.io/), [Sass](http://sass-lang.com/), and [Browsersync](https://www.browsersync.io/).
-
-![Preview](doc/demo.gif)
+# git-my-stats
+[![Build Status](https://travis-ci.org/Joeoh/GitMyStats.svg?branch=master)](https://travis-ci.org/Joeoh/GitMyStats)
+[![devDependency Status](https://david-dm.org/Joeoh/GitMyStats/dev-status.svg)](https://david-dm.org/Joeoh/GitMyStats#info=devDependencies)
 
 ## Setup
 ### Prerequisites
@@ -16,39 +13,23 @@ Download a suitable package from the [official page](https://nodejs.org/en/) and
 #### 3. Install Global Dependencies
 In your console, enter the following command:
 ```
-npm install -g bower gulp yo generator-office
+npm install -g bower gulp
 ```
-This will install the global project dependencies [Bower](http://bower.io/), [Gulp](http://gulpjs.com/), [Yeoman](http://yeoman.io/), and [generator-office](https://github.com/officedev/generator-office).
+This will install the global project dependencies [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/).
 
 ### Install Project Dependencies
-In your console, change the current working directory to the `office-addin-base` project folder, and enter the following commands in your console:
 ```
 npm install
 bower install
 ```
 This will install all local project dependencies as configured in `package.json` (npm) and `bower.json` (bower).
 
-## Create an Add-In Manifest
-Enter the following command in your console:
-```
-yo office
-```
-Follow the instructions, and enter the following values when prompted:
-
-_Technology to use_
-```
-Manifest.xml only (no application source files)
-```
-
-_Add-in start URL_
-```
-https://localhost:8443/
-```
-This will create a manifest that can be loaded in all supported Office products.
-
 ## Gulp Tasks
+### gulp mocha
+Runs test files matching `test/test-*.js` with mocha.
+
 ### `gulp build`
-Creates a debug build in `/debug`.
+Runs the `test` task and creates a debug build in `/debug`.
 
 ### `gulp serve`
 Runs the `build` task, and serves the debug build at `https://localhost:8443/`.
@@ -67,6 +48,3 @@ For this to work, you need to create a file called `ftp.json` in the root direct
   "pass": "..."
 }
 ```
-
-## Run Your Add-In
-TODO
