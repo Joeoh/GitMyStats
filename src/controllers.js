@@ -8,9 +8,6 @@ const locale = window.location.search.split('=')[2].split('|')[3];
 
 Office.initialize = () => {
     $('body').addClass(client.toLowerCase());
-    $("#usernameSubmit").click(function () {
-        onSubmit();
-    });
 };
 
 officeApp.config(['$routeProvider',
