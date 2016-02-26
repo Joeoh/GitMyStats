@@ -32,6 +32,13 @@ var github = {
   // GET /repos/:owner/:repo/collaborators
   commits: function(owner, repo, onsuccess, onfail) {
     get("https://api.github.com/repos/" + owner + "/" + repo + "/commits", onsuccess, onfail);
+  },
+  // GET /repos/:owner/:repo/stats/contributors
+  // start_week, end_week: week numbers given as a Unix timestamp https://en.wikipedia.org/wiki/Unix_time
+  // start_week: if null indicated the beginning of time
+  // end_week: if null specifies now
+  collaborators: function(repo, start_week, end_week, user, onsuccess, onfail) {
+    var test = 1;
   }
 };
 
