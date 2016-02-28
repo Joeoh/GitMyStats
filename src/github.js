@@ -17,7 +17,7 @@
 */
 
 var get = function(url, onsuccess, onfail) {
-  $.get(url, function(response) {
+    $.get(url, function (response) {
     onsuccess(response);
   }).fail(function() {
     onfail();
@@ -27,7 +27,7 @@ var get = function(url, onsuccess, onfail) {
 //checks if a unix timestamp is within two others inclusively.
 var withinTime = function(start_week, end_week, input_week){
     var isValid = false;
-    if((start_week === NULL && end_week === NULL) || (start_week === NULL && input_week <= end_week ) || (start_week <= input_week && input_week <= end_week)){
+    if((start_week === null && end_week === null) || (start_week === null && input_week <= end_week ) || (start_week <= input_week && end_week === null) || (start_week <= input_week && input_week <= end_week)){
         isValid = true;
     }
     return isValid;
@@ -47,20 +47,25 @@ var github = {
     // start_week: if null indicated the beginning of time
     // end_week: if null specifies now
     //a valid week is considered to be one which begins before the end_week and after the start_week values
-    collaborators: function(owner, repo, start_week, end_week, user, onsuccess, onfail) {
-        var json = get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", onsuccess, onfail);
+    contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
+        get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
 
-        $.grep(json, function (value1) {  //http://api.jquery.com/jQuery.grep/ returns array of desired contributors -- if return value is true, element is retained, else it is deleted.
-            var validContributor = true;
-            if(user === NULL || value.author.login === user){     //check if desired contributor
-                $.grep(value.weeks, function (value2){            //check if given week is within desired time frame
-                    return withinTime(start_week, end_week, value2.w);
-                });
-            }
-            else
-                validContributor = false;
-            return validContributor;
-        });
+            response = $.grep(response, function (collaborator, index) {                            //http://api.jquery.com/jQuery.grep/ returns array of desired contributors -- if return value is true, element is retained, else it is deleted.
+                var validContributor = true;
+
+                if (user === null || collaborator.author.login === user) {                          //filter desired contributors
+                    response[index].weeks = $.grep(collaborator.weeks, function (week) {            //filter desired weeks from desired contributors
+                        return withinTime(start_week, end_week, week.w);
+                    });
+                }
+                else
+                    validContributor = false;
+
+                return validContributor;
+            });
+            onsuccess(response);
+        }, onfail);
+
     }
 };
 
