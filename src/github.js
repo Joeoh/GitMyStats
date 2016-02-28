@@ -27,7 +27,7 @@ var get = function(url, onsuccess, onfail) {
 //checks if a unix timestamp is within two others inclusively.
 var withinTime = function(start_week, end_week, input_week){
     var isValid = false;
-    if((start_week === NULL && end_week === NULL) || (start_week === NULL && input_week <= end_week ) || (start_week <= input_week && input_week <= end_week){
+    if((start_week === NULL && end_week === NULL) || (start_week === NULL && input_week <= end_week ) || (start_week <= input_week && input_week <= end_week)){
         isValid = true;
     }
     return isValid;
