@@ -4,6 +4,7 @@
      * Example: "?_host_Info=Powerpoint|Win32|16.01|en-US"
      */
 
+/*
     const client = window.location.search.split('=')[2].split('|')[0];
     const os = window.location.search.split('=')[2].split('|')[1];
     const version = window.location.search.split('=')[2].split('|')[2];
@@ -136,5 +137,6 @@
         });
 
     }
+*/
 
 })();

@@ -11,15 +11,20 @@ body {
     justify-content: center;
     margin: 0;
     overflow: hidden;
+
 }
 
 form {
     @include placeholder-color($ms-color-neutralTertiary);
     transform: scale(1.5);
     width: 180px;
-
     button {
+
         margin-top: 5px;
         width: 100%;
+    }
+    smallButton{
+        margin-top: 5px;
+        width: 45%;
     }
 }
