@@ -1,6 +1,16 @@
 /*
-  <script src="Chart.js-2.0.0-beta2/Chart.min.js"></script>
-  <script src="../bower_components/tinycolor/tinycolor.js"></script>
+  Provides an object called `chart` with functions for creating base 64 encoded
+  images of charts.
+
+  Example usage:
+
+    chart.pie([[8, "Sleep"], [8, "Work"]], function(base64Image) {
+      console.log(base64Image)
+    })
+
+  The following dependencies must be loaded before this file:
+    <script src="Chart.js-2.0.0-beta2/Chart.min.js"></script>
+    <script src="../bower_components/tinycolor/tinycolor.js"></script>
 */
 
 const HIDDEN_DIV_ID = "chart_js_hidden_id"
