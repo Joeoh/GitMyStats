@@ -1,5 +1,5 @@
 var assert = require("chai").assert;
-var asyncAsserts = require("./mocha-async-helper.js");
+var asyncAsserts = require("./async-helper.js");
 
 describe("example synchronous test", function() {
     it("should all be true", function() {

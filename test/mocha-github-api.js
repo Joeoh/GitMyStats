@@ -2,7 +2,7 @@ var jsdom = require("jsdom");
 var window = jsdom.jsdom().defaultView;
 global.$ = require("jquery")(window);
 var assert = require("chai").assert;    
-var asyncAsserts = require("./mocha-async-helper.js");
+var asyncAsserts = require("./async-helper.js");
 var github = require("../src/github.js");
 
 describe("GitHub API /user/:username", function() {
