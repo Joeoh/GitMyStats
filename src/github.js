@@ -126,6 +126,10 @@ var github = {
     issues: function (owner, repo, state, milestone, label, onsuccess, onfail) {
         var queryString = formIssueQueryString(state, milestone, label);
         get("https://api.github.com/repos/" + owner + "/" + repo + "/issues" + queryString, onsuccess, onfail);
+    },
+
+    punch_card: function (owner, repo, onsuccess, onfail) {
+        get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/punch_card", onsuccess, onfail);
     }
 };
 
