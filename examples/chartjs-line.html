@@ -5,7 +5,7 @@
     <script src="../src/charts.js"></script>
     <script>
       function demo() {
-        chart.pie([[8, "Sleep"], [8, "Work"], [6, "Relax"], [2, "Eat"]], function(base64Image) {
+        chart.line("Additions", [["a", 8], ["b", 12], ["c", 3], ["d", 9]], function(base64Image) {
           document.getElementById("image").src = base64Image
         })
       }

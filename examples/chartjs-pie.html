@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <script src="../src/Chart.js-2.0.0-beta2/Chart.min.js"></script>
+    <script src="../bower_components/tinycolor/tinycolor.js"></script>
+    <script src="../src/charts.js"></script>
+    <script>
+      function demo() {
+        chart.pie([["Sleep", 8], ["Eat", 2], ["Work", 8], ["Repeat", 6]], function(base64Image) {
+          document.getElementById("image").src = base64Image
+        })
+      }
+    </script>
+  </head>
+  <body onload="demo()">
+    <img id="image" style="max-width:1000px;"></img>
+  </body>
+</html>
