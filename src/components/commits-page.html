@@ -1,0 +1,60 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="commits-page">
+
+    <template>
+        <form id="form">
+            <label class="ms-Label">Commits graph</label>
+            <div class="ms-TextField">
+                <label class="ms-Label">Repository URL</label>
+                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">Start Date</label>
+                <input id="startDate" type="date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">End Date</label>
+                <input id="endDate" type="date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+            </div>
+            <div>
+                <label class="ms-Label">Users</label>
+                <select name="userSelect">
+                    <option value="combined">All users</option>
+                    <option value="singleUser">Single User</option>
+                </select>
+            </div>
+            <div>
+                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
+            </div>
+
+            <div>
+                <smallButton on-click="cancel" class="ms-Button host-button">
+                    <span class="ms-Button-label">Cancel</span>
+                </smallButton>
+                <smallButton on-click="insert" class="ms-Button host-button">
+                    <span class="ms-Button-label">Insert</span>
+                </smallButton>
+            </div>
+        </form>
+    </template>
+
+    <script>
+        Polymer({
+            is: "commits-page",
+            ready: function() {
+                chart.line("Additions", [["a", 25], ["b", 12], ["c", 20]], function(base64Image) {
+                    // console.log(base64Image)
+                    console.log("base64Image from commits page!!")
+                })
+            },
+            cancel: function() {
+                this.fire("toLandingPage")
+            },
+            insert: function() {
+                console.log("time to isnert a graph")
+            }
+        });
+    </script>
+
+</dom-module>

@@ -1,34 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="officeApp">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GitMyStats</title>
+    <!-- 3rd party scripts -->
+    <script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/tinycolor/tinycolor.js"></script>
+    <script src="chartjsbeta2/Chart.min.js"></script>
+    <!-- custom scripts -->
+    <script src="initialize.js"></script>
+    <script src="charts.js"></script>
     <!-- stylesheets -->
     <link rel="stylesheet" href="../bower_components/office-ui-fabric/dist/css/fabric.min.css">
     <link rel="stylesheet" href="../bower_components/office-ui-fabric/dist/css/fabric.components.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- 3rd party scripts -->
-    <script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
-    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angular-route/angular-route.js"></script>
-    <script src="../bower_components/tinycolor/tinycolor.js"></script>
-    <script src="chartjsbeta2/Chart.min.js"></script>
-    <!-- custom scripts -->
-    <script src="charts.js"></script>
-    <script src="controllers.js"></script>
-    <!-- Charts demo -->
-    <script>
-        function base64Demo() {
-            chart.line("Additions", [["a", 25], ["b", 12], ["c", 20]], function(base64Image) {
-                // console.log(base64Image)
-                console.log("logging image works in index.html")
-            })
-        }
-    </script>
+    <!-- custom components -->
+    <link rel="import" href="components/gitmystats-app.html">
 </head>
-<body onload="base64Demo()">
-    <div ng-view id="mainView"></div>
+<body>
+    <gitmystats-app></gitmystats-app>
 </body>
 </html>
