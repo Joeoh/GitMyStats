@@ -16,13 +16,14 @@ const babel       = require('gulp-babel'),
 
 // path regexes to match certain file groups
 const glob = {
-    all    : '**/*',
-    assets : 'assets/**/*',
-    html   : '**/*.html',
-    js     : '**/*.js',
-    scss   : '**/*.scss',
-    css    : '**/*.css',
-    mocha  : '**/mocha-*.js'
+    all        : '**/*',
+    assets     : 'assets/**/*',
+    html       : '**/*.html',
+    js         : '**/*.js',
+    scss       : '**/*.scss',
+    css        : '**/*.css',
+    testLocal  : '**/test-local*.js',
+    testTravis : '**/test-travis-*.js'
 };
 
 // useful paths to parts of the project
@@ -36,8 +37,8 @@ const path = {
 };
 
 // Clean the debug/ and ship/ folders
-gulp.task('clean', () =>
-    gulp.src([ path.debug, path.ship ])
+gulp.task('rmrf', () =>
+    gulp.src([path.debug, path.ship])
         .pipe(rimraf())
 );
 
@@ -88,7 +89,7 @@ gulp.task('inject', ['markup', 'script', 'compile-css'], () => {
 });
 
 // Run tests and create a debug build of the web application
-gulp.task('build', ['assets', 'inject']);
+gulp.task('build', ['assets', 'test-local']);
 
 // Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
@@ -157,8 +158,14 @@ gulp.task('ship', ['ship-build'], () => {
 });
 
 // Run tests with `mocha`
-gulp.task('mocha', function() {
-  return gulp.src([path.test + glob.mocha], { read: false })
+gulp.task('test-all', function() {
+  return gulp.src([path.test + glob.testLocal, path.test + glob.testTravis], { read: false })
+    .pipe(mocha({timeout: 5000}));
+});
+
+// Run tests with `mocha`
+gulp.task('test-local', function() {
+  return gulp.src([path.test + glob.testLocal], { read: false })
     .pipe(mocha({timeout: 5000}));
 });
 
