@@ -22,7 +22,7 @@ const glob = {
     js     : '**/*.js',
     scss   : '**/*.scss',
     css    : '**/*.css',
-    test   : '**/test-*.js'
+    mocha  : '**/mocha-*.js'
 };
 
 // useful paths to parts of the project
@@ -158,7 +158,7 @@ gulp.task('ship', ['ship-build'], () => {
 
 // Run tests with `mocha`
 gulp.task('mocha', function() {
-  return gulp.src([path.test + glob.test], { read: false })
+  return gulp.src([path.test + glob.mocha], { read: false })
     .pipe(mocha({timeout: 5000}));
 });
 
