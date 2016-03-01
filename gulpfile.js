@@ -88,7 +88,7 @@ gulp.task('inject', ['markup', 'script', 'compile-css'], () => {
 });
 
 // Run tests and create a debug build of the web application
-gulp.task('build', ['assets', 'inject', 'mocha']);
+gulp.task('build', ['assets', 'inject']);
 
 // Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
