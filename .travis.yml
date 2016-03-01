@@ -3,4 +3,4 @@ node_js:
   - 4.3
 before_script:
   - npm install -g gulp
-script: gulp mocha
+script: gulp test-local
