@@ -14,14 +14,13 @@
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/angular-route/angular-route.js"></script>
     <script src="../bower_components/tinycolor/tinycolor.js"></script>
-    <script src="../Chart.js-2.0.0-beta2/Chart.min.js"></script>
+    <script src="chartjsbeta2/Chart.min.js"></script>
     <!-- custom scripts -->
     <script src="charts.js"></script>
     <script src="controllers.js"></script>
     <!-- Charts demo -->
     <script>
         function base64Demo() {
-            console.log("demo time")
             chart.line("Additions", [["a", 25], ["b", 12], ["c", 20]], function(base64Image) {
                 console.log(base64Image)
             })
