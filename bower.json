@@ -10,7 +10,8 @@
     "office-ui-fabric": "~1.2.1",
     "angular": "1.5.0",
     "gh3": "^1.0.3",
-    "angular-route": "1.4.x"
+    "angular-route": "1.4.x",
+    "tinycolor": "^1.3.0"
   },
   "resolutions": {
     "angular": "1.5.0"
