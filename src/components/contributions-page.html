@@ -68,7 +68,10 @@
                 console.log(singleUser)
                 var selectedUser = this.$.selectedUser.value
                 console.log(selectedUser)
-                console.log("time to isnert a graph")
+                var data = [["a", 25], ["b", 12], ["c", 20], ["d", 9], ["e", 7], ["f", 10]]
+                chart.line("Additions", data, function(base64Image) {
+                    console.log(base64Image)
+                })
             }
         });
     </script>

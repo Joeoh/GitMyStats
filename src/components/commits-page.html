@@ -42,12 +42,6 @@
     <script>
         Polymer({
             is: "commits-page",
-            ready: function() {
-                chart.line("Additions", [["a", 25], ["b", 12], ["c", 20]], function(base64Image) {
-                    // console.log(base64Image)
-                    console.log("base64Image from commits page!!")
-                })
-            },
             cancel: function() {
                 this.fire("toLandingPage")
             },
