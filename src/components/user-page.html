@@ -30,6 +30,12 @@
                 this.fire("toLandingPage")
             },
             insert: function() {
+                //if this is empty do graph for all repos for this user
+                var url = this.$.repositoryURL.value
+                console.log(url)
+
+                var selectedUser = this.$.selectedUser.value
+                console.log(selectedUser)
                 console.log("time to isnert a graph")
             }
         });

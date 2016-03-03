@@ -19,7 +19,7 @@
             </div>
             <div>
                 <label class="ms-Label">Users</label>
-                <select name="userSelect">
+                <select id = "userSelect" name="userSelect">
                     <option value="combined">All users</option>
                     <option value="singleUser">Single User</option>
                 </select>
@@ -52,7 +52,19 @@
                 this.fire("toLandingPage")
             },
             insert: function() {
-                console.log("time to isnert a graph")
+                var url = this.$.repositoryURL.value
+                console.log(url)
+                var startDate = this.$.startDate.value
+                console.log(startDate)
+                var endDate = this.$.endDate.value
+                console.log(endDate)
+                //singleUser is boolean true if dropdown selection is singleUser
+                // otherwise calculate graph for all users
+                var singleUser = this.$.userSelect.value == "singleUser"
+                console.log(singleUser)
+                var selectedUser = this.$.selectedUser.value
+                console.log(selectedUser)
+                console.log("time to isnert a graph!")
             }
         });
     </script>
