@@ -8,22 +8,32 @@
       console.log(base64Image)
     })
 
-  The following dependencies must be loaded before this file:
-    <script src="Chart.js-2.0.0-beta2/Chart.min.js"></script>
+  The following dependencies must be loaded first:
+    // for time scales in Chart.js
+    <script src="../bower_components/moment/moment.js"></script>
+    // for converting from HSL colors to hex strings
     <script src="../bower_components/tinycolor/tinycolor.js"></script>
+    // for creating charts
+    <script src="chartjsbeta2/Chart.min.js"></script>
 */
 
 const HIDDEN_CANVAS_ID = "chart_js_hidden_id_(^_^)"
 
-// Create a (hidden) canvas element for Chart.js.
-window.addEventListener("load", function() {
-  var canvas = document.createElement("canvas")
-  canvas.id = HIDDEN_CANVAS_ID
-  canvas.style.display = "none"
-  document.body.appendChild(canvas)
-})
-
 var chart = {
+  // points: [[date, yValue]]
+  line: function(label, points, callback) {
+    var data = this._toChartData(points)
+    data.datasets[0].label = label
+    data.datasets[0].backgroundColor = "#88D3A1"
+    var options = {
+      scales: {
+        xAxes: [{
+          type: "time"
+        }]
+      }
+    }
+    this._create("line", data, options, callback)
+  },
   // points: [[value, label]]
   pie: function(points, callback) {
     var data = this._toChartData(points)
@@ -31,14 +41,33 @@ var chart = {
     data.datasets[0].backgroundColor = []
     for (var i = 0; i < colors.length; i++)
       data.datasets[0].backgroundColor.push(colors[i])
-    this._create("pie", data, {}, callback)
+    var options = {
+      cutoutPercentage: 50
+    }
+    this._create("pie", data, options, callback)
   },
-  // points: [[date, yValue]]
-  line: function(label, points, callback) {
-    var data = this._toChartData(points)
-    data.datasets[0].label = label
-    data.datasets[0].backgroundColor = "#88D3A1"
-    this._create("line", data, {}, callback)
+  // Create a chart and call the callback with the chart as a base 64 image.
+  _create: function(type, data, options, callback) {
+    var newChart
+    Chart.defaults.global.animation.onComplete = function() {
+      callback(newChart.toBase64Image())
+    }
+    var hiddenCanvas = this._hiddenCanvas()
+    newChart = new Chart(hiddenCanvas.getContext("2d"), {
+      type: type,
+      data: data,
+      options: options
+    })
+  },
+  // Create and return a (hidden) canvas element for Chart.js.
+  _hiddenCanvas: function() {
+    if (!document.getElementById(HIDDEN_CANVAS_ID)) {
+      var canvas = document.createElement("canvas")
+      canvas.id = HIDDEN_CANVAS_ID
+      canvas.style.display = "none"
+      document.body.appendChild(canvas)
+    }
+    return document.getElementById(HIDDEN_CANVAS_ID)
   },
   // Return data structured for Chart.js.
   // points: [x, y]
@@ -66,20 +95,7 @@ var chart = {
       colors.push(tinycolor(hsl).toHexString())
     }
     return colors
-  },
-  // Create a chart and call the callback with the chart as a base 64 image.
-  _create: function(type, data, options, callback) {
-    var newChart
-    Chart.defaults.global.animation.onComplete = function() {
-      callback(newChart.toBase64Image())
-    }
-    var hiddenCanvas = document.getElementById(HIDDEN_CANVAS_ID)
-    newChart = new Chart(hiddenCanvas.getContext("2d"), {
-      type: type,
-      data: data,
-      options: options
-    })
-  } 
+  }
 }
 
 // Make available to `node` for unittesting.
