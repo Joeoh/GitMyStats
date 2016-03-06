@@ -20,7 +20,7 @@ const CLOSED = -1;
 const ALL = 0;
 
 var get = function(url, onsuccess, onfail) {
-    $.get(url, function (response) {
+  $.get(url, function (response) {
     onsuccess(response);
   }).fail(function() {
     onfail();
@@ -29,11 +29,10 @@ var get = function(url, onsuccess, onfail) {
 
 //checks if a unix timestamp is within two others inclusively.
 var withinTime = function(start_week, end_week, input_week){
-    var isValid = false;
-    if((start_week === null && end_week === null) || (start_week === null && input_week <= end_week ) || (start_week <= input_week && end_week === null) || (start_week <= input_week && input_week <= end_week)){
-        isValid = true;
-    }
-    return isValid;
+    return ((start_week === null && end_week === null) ||
+            (start_week === null && input_week <= end_week ) ||
+            (start_week <= input_week && end_week === null) ||
+            (start_week <= input_week && input_week <= end_week))
 };
 
 var formIssueQueryString = function(state, milestone, label){

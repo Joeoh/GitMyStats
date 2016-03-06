@@ -21,7 +21,12 @@ var chart = {
     var data = this._toChartData(points)
     data.datasets[0].label = label
     data.datasets[0].backgroundColor = "#88D3A1"
-    this._create("line", data, {}, callback)
+    var options = {
+          xAxes: [{
+            display: false
+          }]
+        }
+    this._create("line", data, options, callback)
   },
   // points: [[value, label]]
   pie: function(points, callback) {
@@ -45,7 +50,7 @@ var chart = {
       options: options
     })
   },
-  // Create a (hidden) canvas element for Chart.js.
+  // Create and return a (hidden) canvas element for Chart.js.
   _hiddenCanvas: function() {
     if (!document.getElementById(HIDDEN_CANVAS_ID)) {
       var canvas = document.createElement("canvas")
