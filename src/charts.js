@@ -8,9 +8,13 @@
       console.log(base64Image)
     })
 
-  The following dependencies must be loaded before this file:
-    <script src="Chart.js-2.0.0-beta2/Chart.min.js"></script>
+  The following dependencies must be loaded first:
+    // for time scales in Chart.js
+    <script src="../bower_components/moment/moment.js"></script>
+    // for converting from HSL colors to hex strings
     <script src="../bower_components/tinycolor/tinycolor.js"></script>
+    // for creating charts
+    <script src="chartjsbeta2/Chart.min.js"></script>
 */
 
 const HIDDEN_CANVAS_ID = "chart_js_hidden_id_(^_^)"
@@ -22,10 +26,12 @@ var chart = {
     data.datasets[0].label = label
     data.datasets[0].backgroundColor = "#88D3A1"
     var options = {
-          xAxes: [{
-            display: false
-          }]
-        }
+      scales: {
+        xAxes: [{
+          type: "time"
+        }]
+      }
+    }
     this._create("line", data, options, callback)
   },
   // points: [[value, label]]
@@ -35,7 +41,10 @@ var chart = {
     data.datasets[0].backgroundColor = []
     for (var i = 0; i < colors.length; i++)
       data.datasets[0].backgroundColor.push(colors[i])
-    this._create("pie", data, {}, callback)
+    var options = {
+      cutoutPercentage: 50
+    }
+    this._create("pie", data, options, callback)
   },
   // Create a chart and call the callback with the chart as a base 64 image.
   _create: function(type, data, options, callback) {
