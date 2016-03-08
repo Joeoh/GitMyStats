@@ -67,19 +67,31 @@
                 var singleUser = this.$.userSelect.value == "singleUser"
                 console.log(singleUser)
                 var selectedUser = this.$.selectedUser.value
-                console.log(selectedUser)
-                var points = [
-                  [new Date("1-1-2010"), 25],
-                  [new Date("1-2-2010"), 42],
-                  [new Date("1-3-2010"), 28],
-                  [new Date("1-4-2010"), 10],
-                  [new Date("1-5-2010"), 16],
-                ]
-                chart.line("Additions", points, function(base64Image) {
-                    console.log(base64Image)
-                })
+                console.log(selectedUser);
+                var owner = url.split('/')[0];
+                var repo = url.split('/')[1];
+                var commits = [];
+                github.commits(owner, repo, function(data){
+                    commits = data;
+                    console.log(commits);
+                    var points = [
+                        [new Date("1-1-2010"), 25],
+                        [new Date("1-2-2010"), 42],
+                        [new Date("1-3-2010"), 28],
+                        [new Date("1-4-2010"), 10],
+                        [new Date("1-5-2010"), 16],
+                    ]
+                    chart.line("Additions", points, function(base64Image) {
+                        console.log(base64Image);
+                        insertData(base64Image.replace("data:image/png;base64,",""), "image");
+
+                    })
+
+                });
+
             }
         });
+
     </script>
 
 </dom-module>
