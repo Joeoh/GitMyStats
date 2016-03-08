@@ -94,7 +94,9 @@ var github = {
     // end_week: if null specifies now
     // a valid week is considered to be one which begins before the end_week and after the start_week values
     contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
-        get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
+        var url = "https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors"
+        console.log("github.contributors url: " + url)
+        get(url, function (response) {
 
             response = $.grep(response, function (collaborator, index) {                            //http://api.jquery.com/jQuery.grep/ returns array of desired contributors -- if return value is true, element is retained, else it is deleted.
                 var validContributor = true;
@@ -112,6 +114,23 @@ var github = {
             onsuccess(response);
         }, onfail);
 
+    },
+    // convert the response from `github.contributions` to [[date, total]]
+    contributionsPerWeek: function(contributors, type) {
+        var data = {}
+        for (var i in contributors) {
+            var weeks = contributors[i].weeks
+            for (var j in weeks) {
+                if (weeks[j].w in data)
+                    data[weeks[j].w] = weeks[j][type]
+                else
+                    data[weeks[j].w] += weeks[j][type]
+            }
+        }
+        var points = []
+        for (var timestamp in data)
+            points.push([new Date(timestamp * 1000), data[timestamp]])
+        return points
     },
     // GET /repos/:owner/:repo/issues
     // state: 1 returns OPEN issues
