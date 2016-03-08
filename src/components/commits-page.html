@@ -28,22 +28,15 @@
                 <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
             </div>
 
-            <div class="buttonPair">
-                <smallButton on-click="cancel" class="ms-Button host-button">
-                    <span class="ms-Button-label">Cancel</span>
-                </smallButton>
-                <smallButton on-click="insert" class="ms-Button host-button">
-                    <span class="ms-Button-label">Insert</span>
-                </smallButton>
-            </div>
+            <button-pair></button-pair>
         </form>
     </template>
 
     <script>
         Polymer({
             is: "commits-page",
-            cancel: function() {
-                this.fire("toLandingPage")
+            listeners: {
+                "button-pair-insert": "insert"
             },
             insert: function() {
                 var url = this.$.repositoryURL.value
