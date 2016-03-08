@@ -84,6 +84,7 @@
                     var points = github.contributionsPerWeek(response, mode)
                     console.log(points)
                     chart.line("Additions", points, function(base64Image) {
+                        console.log(base64Image);
                         insertData(base64Image.replace("data:image/png;base64,",""), "image");
                     })
                 }, null);
