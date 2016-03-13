@@ -34,14 +34,17 @@ var chart = {
     }
     this._create("line", data, options, callback)
   },
-  weekdayCommits: function(commits, callback) {
+  weekdayCommits: function(repo, commits, callback) {
     var data = [
       ["Sunday", commits[0]], ["Monday", commits[1]],
       ["Tuesday", commits[2]], ["Wednesday", commits[3]],
       ["Thursday", commits[4]], ["Friday", commits[5]],
       ["Saturday", commits[6]]
     ]
-    data = this._toChartData(data);
+    data = this._toChartData(data)
+    data.datasets[0].fill = false
+    data.datasets[0].label = "commits by weekday to " + repo
+    data.datasets[0].backgroundColor = "#88D3A1"
     this._create("line", data, {}, callback)
   },
   // points: [[value, label]]

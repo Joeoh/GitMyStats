@@ -30,16 +30,10 @@
                 var url = this.$.repositoryURL.value;
                 var owner = url.split("/")[0];
                 var repo = url.split("/")[1];
-                var mode = this.$.mode.value;
 
-                console.log("owner: " + owner);
-                console.log("repo: " + repo);
-                console.log("mode: " + mode);
-
-                if (mode == "weekday") {
+                if (this.$.mode.value == "weekday") {
                     github.commit_activity(owner, repo, function(commits) {
-                        console.log(commits);
-                        chart.weekdayCommits(commits, function(base64Image) {
+                        chart.weekdayCommits(repo, commits, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
                         })
                     }, null);
