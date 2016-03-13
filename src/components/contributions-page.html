@@ -3,11 +3,11 @@
 <dom-module id="contributions-page">
 
     <template>
-        <form id="form">
+        <form>
             <label class="ms-Label">Contributions graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
             </div>
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
@@ -19,10 +19,10 @@
             </div>
             <div>
                 <label class="ms-Label">Additions/Deletions</label>
-                <select id = "mode" name="mode">
-                    <option value="a">Additions</option>
-                    <option value="d">Deletions</option>
-                    <option value="c">Combined</option>
+                <select id = "mode">
+                    <option value="a" text="Additions">Additions</option>
+                    <option value="d" text="Deletions">Deletions</option>
+                    <option value="c" text="Combined">Combined</option>
                 </select>
             </div>
             <div>
@@ -54,35 +54,19 @@
                 var url = this.$.repositoryURL.value
                 var owner = url.split("/")[0]
                 var repo = url.split("/")[1]
-                var startDate = new Date(this.$.startDate.value)
-                var unixStartDate = startDate.getTime() / 1000
-                var endDate = new Date(this.$.endDate.value)
-                var unixEndDate = endDate.getTime() / 1000
+                var unixStartDate = new Date(this.$.startDate.value).getTime() / 1000
+                var unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
                 var mode = this.$.mode.value
-                // singleUser is boolean true if dropdown selection is singleUser
-                // otherwise calculate graph for all users
-                var singleUser = this.$.userSelect.value == "singleUser"
-                var selectedUser = this.$.selectedUser.value
-
-                var user = singleUser ? selectedUser : null
-
-                console.log("owner: " + owner)
-                console.log("repo: " + repo)
-                console.log("unixStartDate: " + unixStartDate)
-                console.log("unixEndDate: " + unixEndDate)
-                console.log("user: " + user)
-                
+                var title = this.$.mode[this.$.mode.selectedIndex].text
+                var user = (this.$.userSelect.value == "singleUser") ? this.$.selectedUser.value : null
                 github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
                     var points = github.contributionsPerWeek(response, mode)
-                    console.log(points)
-                    chart.line("Additions", points, function(base64Image) {
-                        console.log(base64Image);
+                    chart.contributors(title, points, function(base64Image) {
                         insertData(base64Image.replace("data:image/png;base64,",""), "image");
                     })
                 }, null);
             }
         });
-
     </script>
 
 </dom-module>

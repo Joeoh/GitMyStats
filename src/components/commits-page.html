@@ -3,31 +3,19 @@
 <dom-module id="commits-page">
 
     <template>
-        <form id="form">
+        <form>
             <label class="ms-Label">Commits graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
-            </div>
-            <div class="ms-TextField">
-                <label class="ms-Label">Start Date</label>
-                <input id="startDate" type="date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
-            </div>
-            <div class="ms-TextField">
-                <label class="ms-Label">End Date</label>
-                <input id="endDate" type="date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
             </div>
             <div>
-                <label class="ms-Label">Users</label>
-                <select id = "userSelect" name="userSelect">
-                    <option value="combined">All users</option>
-                    <option value="singleUser">Single User</option>
+                <label class="ms-Label">By Weekday Or Week</label>
+                <select id="mode">
+                    <option value="weekday">Weekday</option>
+                    <option value="week">Week</option>
                 </select>
             </div>
-            <div>
-                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
-            </div>
-
             <button-pair></button-pair>
         </form>
     </template>
@@ -39,36 +27,28 @@
                 "button-pair-insert": "insert"
             },
             insert: function() {
-                var url = this.$.repositoryURL.value
-                console.log(url)
-                var startDate = this.$.startDate.value
-                console.log(startDate)
-                var endDate = this.$.endDate.value
-                console.log(endDate)
-                //singleUser is boolean true if dropdown selection is singleUser
-                // otherwise calculate graph for all users
-                var singleUser = this.$.userSelect.value == "singleUser"
-                console.log(singleUser);
-                var selectedUser = this.$.selectedUser.value
-                console.log(selectedUser)
-                var owner = url.split('/')[0];
-                var repo = url.split('/')[1];
-                selectedUser = null;
+                var url = this.$.repositoryURL.value;
+                var owner = url.split("/")[0];
+                var repo = url.split("/")[1];
+                var mode = this.$.mode.value;
 
-                github.contributors(owner, repo, startDate, endDate, selectedUser, function(data){
-                    var contributors = data;
-                    console.log(contributors);
-                    var points = [];
-                    var i = 0;
-                    for (var contributor of contributors) {
-                        points[i++] = [contributor.author.login, contributor.total];
-                    }
-                    console.log
-                    chart.line("Additions", points, function(base64Image) {
-                        insertData(base64Image.replace("data:image/png;base64,",""), "image");
-                    })
+                console.log("owner: " + owner);
+                console.log("repo: " + repo);
+                console.log("mode: " + mode);
 
-                });
+                if (mode == "weekday") {
+                    github.commit_activity(owner, repo, function(commits) {
+                        console.log(commits);
+                        chart.weekdayCommits(commits, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
+                    }, null);
+                }
+                else {
+                    github.participation(owner, repo, function(response) {
+                        console.log(response);
+                    }, null);
+                }
             }
         });
     </script>
