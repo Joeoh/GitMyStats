@@ -7,3 +7,4 @@ const locale = locationInfo[3];
 Office.initialize = () => {
     $('body').addClass(client.toLowerCase());
 };
+

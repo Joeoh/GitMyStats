@@ -16,14 +16,14 @@ const babel       = require('gulp-babel'),
 
 // path regexes to match certain file groups
 const glob = {
-    all        : '**/*',
-    assets     : 'assets/**/*',
-    html       : '**/*.html',
-    js         : '**/*.js',
-    scss       : '**/*.scss',
-    css        : '**/*.css',
-    testLocal  : '**/test-local*.js',
-    testTravis : '**/test-travis-*.js'
+    all         : '**/*',
+    assets      : 'assets/**/*',
+    html        : '**/*.html',
+    js          : '**/*.js',
+    scss        : '**/*.scss',
+    css         : '**/*.css',
+    testOnline  : '**/test-online*.js', // test that should only be run locally
+    testOffline : '**/test-offline-*.js' // test that can be run on travis
 };
 
 // useful paths to parts of the project
@@ -88,21 +88,8 @@ gulp.task('inject', ['markup', 'script', 'compile-css'], () => {
         .pipe(gulp.dest(path.debug));
 });
 
-// Injects compiled scripts and styles, as well as all dependencies into index.html
-gulp.task('inject', ['markup', 'script', 'compile-css'], () => {
-    const sources = gulp.src(
-        [ path.debug + glob.js, path.debug + glob.css ],
-        { read: false }
-    );
- 
-    return gulp.src(path.debug + 'index.html')
-        .pipe(inject(sources, { relative: true }))
-        // .pipe(wiredep())
-        .pipe(gulp.dest(path.debug));
-});
-
 // Run tests and create a debug build of the web application
-gulp.task('build', ['assets', 'inject', 'test-local']);
+gulp.task('build', ['assets', 'inject', 'test-offline']);
 
 // Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
@@ -170,17 +157,22 @@ gulp.task('ship', ['ship-build'], () => {
         .pipe(conn.dest(path.ftp));
 });
 
-// Run tests with `mocha`
+// Run tests that don't make network accesses.
+gulp.task('test-offline', function() {
+  return gulp.src([path.test + glob.testOffline], { read: false })
+    .pipe(mocha({timeout: 5000}));
+});
+
+// Run tests that make network accesses.
+gulp.task('test-online', function() {
+  return gulp.src([path.test + glob.testOnline], { read: false })
+    .pipe(mocha({timeout: 5000}));
+});
+
+// Run all tests.
 gulp.task('test-all', function() {
-  return gulp.src([path.test + glob.testLocal, path.test + glob.testTravis], { read: false })
+  return gulp.src([path.test + glob.testOnline, path.test + glob.testOffline], { read: false })
     .pipe(mocha({timeout: 5000}));
 });
-
-// Run tests with `mocha`
-gulp.task('test-local', function() {
-  return gulp.src([path.test + glob.testLocal], { read: false })
-    .pipe(mocha({timeout: 5000}));
-});
-
 // When gulp is executed without args run the serve task
 gulp.task('default', ['serve']);

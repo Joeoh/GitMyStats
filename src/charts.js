@@ -21,7 +21,7 @@ const HIDDEN_CANVAS_ID = "chart_js_hidden_id_(^_^)"
 
 var chart = {
   // points: [[date, yValue]]
-  line: function(label, points, callback) {
+  contributors: function(label, points, callback) {
     var data = this._toChartData(points)
     data.datasets[0].label = label
     data.datasets[0].backgroundColor = "#88D3A1"
@@ -33,6 +33,19 @@ var chart = {
       }
     }
     this._create("line", data, options, callback)
+  },
+  weekdayCommits: function(repo, commits, callback) {
+    var data = [
+      ["Sunday", commits[0]], ["Monday", commits[1]],
+      ["Tuesday", commits[2]], ["Wednesday", commits[3]],
+      ["Thursday", commits[4]], ["Friday", commits[5]],
+      ["Saturday", commits[6]]
+    ]
+    data = this._toChartData(data)
+    data.datasets[0].fill = false
+    data.datasets[0].label = "commits by weekday to " + repo
+    data.datasets[0].backgroundColor = "#88D3A1"
+    this._create("line", data, {}, callback)
   },
   // points: [[value, label]]
   pie: function(points, callback) {
@@ -70,7 +83,7 @@ var chart = {
     return document.getElementById(HIDDEN_CANVAS_ID)
   },
   // Return data structured for Chart.js.
-  // points: [x, y]
+  // points: [xLabel, yValue]
   _toChartData: function(points) {
     var data = {
       labels: [],
