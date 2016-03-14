@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="help-page">
+  
+  <template>  
+  <!-- add all html page design stuff here. -->
+    <div class="help-page">
+      <div>
+        This is the help page.
+      </div>
+      <smallButton on-click="cancel" class="ms-Button host-button">
+          <span class="ms-Button-label">Cancel</span>
+      </smallButton>
+    </div>
+  </template>
+
+  <Script>
+    Polymer({
+      is: "help-page",
+      cancel: function() { this.fire("toLandingPage") }
+    });
+  </Script>
+</dom-module>
