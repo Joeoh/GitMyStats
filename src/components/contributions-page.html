@@ -27,14 +27,14 @@
             </div>
             <div>
                 <label class="ms-Label">Users</label>
-                <select id = "userSelect" name="userSelect">
+                <select id="userSelect" on-change="userSelectChange">
                     <option value="combined">All users</option>
                     <option value="singleUser">Single User</option>
                 </select>
             </div>
-            <div>
-                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
-            </div>
+            <template is="dom-if" if="{{showUserInput}}">
+                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
+            </template>
             <button-pair></button-pair>
         </form>
     </template>
@@ -42,10 +42,17 @@
     <script>
         Polymer({
             is: "contributions-page",
+            // Set default values for date inputs.
             ready: function() {
                 var now = new Date()
                 this.$.endDate.valueAsDate = now
                 this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
+            },
+            properties: {
+                showUserInput: {
+                    type: Boolean,
+                    value: false
+                }
             },
             listeners: {
                 "button-pair-insert": "insert"
@@ -65,6 +72,11 @@
                         insertData(base64Image.replace("data:image/png;base64,",""), "image");
                     })
                 }, null);
+            },
+            // Show or hide the user input field depending on the value of the
+            // #userSelect dropdown.
+            userSelectChange: function() {
+                this.showUserInput = this.$.userSelect.value == "singleUser"
             }
         });
     </script>
