@@ -1,0 +1,72 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="contributions-page">
+
+    <template>
+        <form>
+            <label class="ms-Label">Contributions graph</label>
+            <div class="ms-TextField">
+                <label class="ms-Label">Repository URL</label>
+                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">Start Date</label>
+                <input  id="startDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">End Date</label>
+                <input  id="endDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+            </div>
+            <div>
+                <label class="ms-Label">Additions/Deletions</label>
+                <select id = "mode">
+                    <option value="a" text="Additions">Additions</option>
+                    <option value="d" text="Deletions">Deletions</option>
+                    <option value="c" text="Combined">Combined</option>
+                </select>
+            </div>
+            <div>
+                <label class="ms-Label">Users</label>
+                <select id = "userSelect" name="userSelect">
+                    <option value="combined">All users</option>
+                    <option value="singleUser">Single User</option>
+                </select>
+            </div>
+            <div>
+                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
+            </div> 
+            <button-pair></button-pair>
+        </form>
+    </template>
+
+    <script>
+        Polymer({
+            is: "contributions-page",
+            ready: function() {
+                var now = new Date()
+                this.$.endDate.valueAsDate = now
+                this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
+            },
+            listeners: {
+                "button-pair-insert": "insert"
+            },
+            insert: function() {
+                var url = this.$.repositoryURL.value
+                var owner = url.split("/")[0]
+                var repo = url.split("/")[1]
+                var unixStartDate = new Date(this.$.startDate.value).getTime() / 1000
+                var unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
+                var mode = this.$.mode.value
+                var title = this.$.mode[this.$.mode.selectedIndex].text
+                var user = (this.$.userSelect.value == "singleUser") ? this.$.selectedUser.value : null
+                github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
+                    var points = github.contributionsPerWeek(response, mode)
+                    chart.contributors(title, points, function(base64Image) {
+                        insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                    })
+                }, null);
+            }
+        });
+    </script>
+
+</dom-module>

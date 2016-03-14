@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="issues-page">
+
+    <template>
+        <form id="form">
+            <label class="ms-Label">Issues graph</label>
+            <div class="ms-TextField">
+                <label class="ms-Label">Repository URL</label>
+                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">Start Date</label>
+                <input  id="startDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">End Date</label>
+                <input  id="endDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+            </div>
+            <div>
+                <label class="ms-Label">Opened/Closed</label>
+                <select id = "mode" name="contributionType">
+                    <option value="combined">Combined</option>
+                    <option value="opened">Opened</option>
+                    <option value="closed">Closed</option>
+                </select>
+            </div>
+            <div>
+                <label class="ms-Label">Users</label>
+                <select id = "userSelect" name="userSelect">
+                    <option value="combined">All users</option>
+                    <option value="singleUser">Single User</option>
+                </select>
+            </div>
+            <div>
+                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
+            </div>
+            <button-pair></button-pair>
+        </form>
+    </template>
+
+    <script>
+        Polymer({
+            is: "issues-page",
+            listeners: {
+                "button-pair-insert": "insert"
+            },
+            insert: function() {
+                var url = this.$.repositoryURL.value
+                console.log(url)
+                var startDate = this.$.startDate.value
+                console.log(startDate)
+                var endDate = this.$.endDate.value
+                console.log(endDate)
+                var mode = this.$.mode.value
+                console.log(mode)
+                //singleUser is boolean true if dropdown selection is singleUser
+                // otherwise calculate graph for all users
+                var singleUser = this.$.userSelect.value == "singleUser"
+                console.log(singleUser)
+                var selectedUser = this.$.selectedUser.value
+                console.log(selectedUser)
+                console.log("time to isnert a graph")
+            }
+        });
+    </script>
+
+</dom-module>

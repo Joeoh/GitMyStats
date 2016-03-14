@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="commits-page">
+
+    <template>
+        <form>
+            <label class="ms-Label">Commits graph</label>
+            <div class="ms-TextField">
+                <label class="ms-Label">Repository URL</label>
+                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
+            </div>
+            <div>
+                <label class="ms-Label">By Weekday Or Week</label>
+                <select id="mode">
+                    <option value="weekday">Weekday</option>
+                    <option value="week">Week</option>
+                </select>
+            </div>
+            <button-pair></button-pair>
+        </form>
+    </template>
+
+    <script>
+        Polymer({
+            is: "commits-page",
+            listeners: {
+                "button-pair-insert": "insert"
+            },
+            insert: function() {
+                var url = this.$.repositoryURL.value;
+                var owner = url.split("/")[0];
+                var repo = url.split("/")[1];
+
+                if (this.$.mode.value == "weekday") {
+                    github.commit_activity(owner, repo, function(commits) {
+                        chart.weekdayCommits(repo, commits, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
+                    }, null);
+                }
+                else {
+                    github.participation(owner, repo, function(response) {
+                        console.log(response);
+                    }, null);
+                }
+            }
+        });
+    </script>
+
+</dom-module>

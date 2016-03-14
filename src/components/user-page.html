@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="user-page">
+
+    <template>
+        <form id="form">
+            <label class="ms-Label">User profile</label>
+            <div>
+                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
+            </div>
+            <div class="ms-TextField">
+                <label class="ms-Label">Single Repository?</label>
+                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+            </div>
+            <button-pair></button-pair>
+        </form>
+    </template>
+
+    <script>
+        Polymer({
+            is: "user-page",
+            listeners: {
+                "button-pair-insert": "insert"
+            },
+            insert: function() {
+                //if this is empty do graph for all repos for this user
+                var url = this.$.repositoryURL.value
+                console.log(url)
+
+                var selectedUser = this.$.selectedUser.value
+                console.log(selectedUser)
+                console.log("time to isnert a graph")
+            }
+        });
+    </script>
+
+</dom-module>

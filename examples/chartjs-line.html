@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../src/chartjsbeta2/Chart.min.js"></script>
+    <script src="../bower_components/tinycolor/tinycolor.js"></script>
+    <script src="../src/charts.js"></script>
+    <script src="../src/github.js"></script>
+    <script>
+      function demo() {
+        github.contributors("joeoh", "gitmystats", 1454976000, 1457395200, null, function(response) {
+            var points = github.contributionsPerWeek(response, "a")
+            chart.line("Additions", points, function(base64Image) {
+              document.getElementById("image").src = base64Image
+            })
+        }, null);
+      }
+    </script>
+  </head>
+  <body onload="demo()">
+    <img id="image" style="max-width:1000px;"></img>
+  </body>
+</html>

@@ -1,10 +1,11 @@
 var officeApp = angular.module("officeApp", ['ngRoute', 'officeAppControllers']);
 var officeAppControllers = angular.module('officeAppControllers', []);
 
-const client = window.location.search.split('=')[2].split('|')[0];
-const os = window.location.search.split('=')[2].split('|')[1];
-const version = window.location.search.split('=')[2].split('|')[2];
-const locale = window.location.search.split('=')[2].split('|')[3];
+const locationInfo = window.location.search.split('=')[2].split('|');
+const client = locationInfo[0];
+const os = locationInfo[1];
+const version = locationInfo[2];
+const locale = locationInfo[3];
 
 Office.initialize = () => {
     $('body').addClass(client.toLowerCase());

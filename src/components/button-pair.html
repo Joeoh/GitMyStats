@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="button-pair">
+  
+  <template>
+    <div class="buttonPair">
+        <smallButton on-click="cancel" class="ms-Button host-button">
+            <span class="ms-Button-label">Cancel</span>
+        </smallButton>
+        <smallButton on-click="insert" class="ms-Button host-button">
+            <span class="ms-Button-label">Insert</span>
+        </smallButton>
+    </div>
+  </template>
+
+  <Script>
+    Polymer({
+        is: "button-pair",
+        cancel: function() { this.fire("toLandingPage") },
+        insert: function() { this.fire("button-pair-insert") }
+    });
+  </Script>
+</dom-module>

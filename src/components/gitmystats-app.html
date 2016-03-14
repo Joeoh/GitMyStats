@@ -1,0 +1,80 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="commits-page.html">
+<link rel="import" href="contributions-page.html">
+<link rel="import" href="punchcard-page.html">
+<link rel="import" href="issues-page.html">
+<link rel="import" href="user-page.html">
+<link rel="import" href="button-pair.html">
+<link rel="import" href="help-page.html">
+
+<dom-module id="gitmystats-app">
+
+    <template>
+        <iron-pages id="ironPages" selected="{{selectedPage}}">
+            <landing-page>
+                <label class="ms-Label">Choose a graph type:</label>
+                <div>
+                    <button on-click="toCommits" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Commits</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toContributions" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Contributions</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toPunchcard" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Punchcard</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toIssues" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Issues</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toUser" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">User Profile</span>
+                    </button>
+                </div>
+                <br>
+                <div>
+                    <button id="helpButton" on-click="toHelp" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Help</span>
+                    </button>
+                </div>
+            </landing-page>
+            <commits-page></commits-page>
+            <contributions-page></contributions-page>
+            <punchcard-page></punchcard-page>
+            <issues-page></issues-page>
+            <user-page></user-page>
+            <help-page></help-page>
+        </iron-pages>
+    </template>
+
+    <script>
+        Polymer({
+            is: "gitmystats-app",
+            properties: {
+                selectedPage: {
+                    type: Number,
+                    value: 0
+                }
+            },
+            listeners: {
+                "toLandingPage": "toLandingPage"
+            },
+            toLandingPage: function() { this.selectedPage = 0 },
+            toCommits: function() { this.selectedPage = 1 },
+            toContributions: function() { this.selectedPage = 2 },
+            toPunchcard: function() { this.selectedPage = 3 },
+            toIssues: function() { this.selectedPage = 4 },
+            toUser: function() { this.selectedPage = 5 },
+            toHelp: function() { this.selectedPage = 6 }
+        });
+    </script>
+
+</dom-module>
