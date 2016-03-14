@@ -11,9 +11,10 @@
 <dom-module id="gitmystats-app">
 
     <template>
+        <span id="errorMessage" class="ms-fontColor-red ms-fontWeight-semibold">{{errorMessage}}</span>
         <iron-pages id="ironPages" selected="{{selectedPage}}">
             <landing-page>
-                <label class="ms-Label">Choose a graph type:</label>
+                <label class="ms-fontWeight-semibold">Choose a graph type:</label>
                 <div>
                     <button on-click="toCommits" class="ms-Button host-button homeButton">
                         <span class="ms-Button-label">Commits</span>
@@ -59,12 +60,23 @@
         Polymer({
             is: "gitmystats-app",
             properties: {
+                // The amount of time to display an error message for.
+                errorMessageTime: {
+                    type: Number,
+                    value: 2000 // in milliseconds
+                },
+                errorMessageTimeoutId: {
+                    type: Number,
+                    value: -1
+                },
+                // The index of the page currently being displayed.
                 selectedPage: {
                     type: Number,
                     value: 0
                 }
             },
             listeners: {
+                "showErrorMessage": "showErrorMessage",
                 "toLandingPage": "toLandingPage"
             },
             toLandingPage: function() { this.selectedPage = 0 },
@@ -73,7 +85,17 @@
             toPunchcard: function() { this.selectedPage = 3 },
             toIssues: function() { this.selectedPage = 4 },
             toUser: function() { this.selectedPage = 5 },
-            toHelp: function() { this.selectedPage = 6 }
+            toHelp: function() { this.selectedPage = 6 },
+            // Show the error message in `detail.text` for `errorMessageTime`.
+            showErrorMessage: function(_, detail) {
+                clearTimeout(this.errorMessageTimeoutId)
+                this.errorMessage = detail.text
+                this.$.errorMessage.style.visibility = "visible"
+                var self = this
+                this.errorMessageTimeoutId = setTimeout(function() {
+                    self.$.errorMessage.style.visibility = "hidden"
+                }, self.errorMessageTime)
+            },
         });
     </script>
 

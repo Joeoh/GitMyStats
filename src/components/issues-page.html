@@ -4,7 +4,7 @@
 
     <template>
         <form id="form">
-            <label class="ms-Label">Issues graph</label>
+            <label class="ms-fontWeight-semibold">Issues graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
                 <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
@@ -47,6 +47,9 @@
             },
             insert: function() {
                 var url = this.$.repositoryURL.value
+                console.log("!url: " + !url)
+                if (!url)
+                    this.fire("showErrorMessage", {text: "No user/repo given."})
                 console.log(url)
                 var startDate = this.$.startDate.value
                 console.log(startDate)
