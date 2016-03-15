@@ -64,19 +64,19 @@
 
                 // Make sure the fields are filled in correctly.
                 if (!url) {
-                    this.fire("showErrorMessage", {text: "No URL given."});
+                    this.fire("showErrorMessage", {text: "Please enter a URL."});
                     return;
                 }
-                if (!unixStartDate) {
-                    this.fire("showErrorMessage", {text: "Invalid Start Date."});
+                if (!startDate) {
+                    this.fire("showErrorMessage", {text: "Invalid Start Date.<br>Please enter another date."});
                     return;
                 }
-                if (!unixEndDate) {
-                    this.fire("showErrorMessage", {text: "Invalid End Date."});
+                if (!endDate) {
+                    this.fire("showErrorMessage", {text: "Invalid End Date.<br>Please enter another date."});
                     return;
                 }
 				if (singleUser && !selectedUser) {
-					this.fire("showErrorMessage", {text: "No user given."});
+					this.fire("showErrorMessage", {text: "Please enter a username in the 'Users' field <br>or select 'All Users' from the dropdown"});
                     return;
                 }
 				console.log("time to isnert a graph")

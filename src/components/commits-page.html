@@ -33,7 +33,7 @@
 
 				// Make sure the URL is filled in.
 				if (!url) {
-                    this.fire("showErrorMessage", {text: "No URL given."})
+                    this.fire("showErrorMessage", {text: "Please enter URL."})
                     return
                 }
                 // Check for valid owner.
@@ -53,7 +53,7 @@
 							insertData(base64Image.replace("data:image/png;base64,",""), "image");
 						})
 					}, function() {
-                        this.fire("showErrorMessage", {text: "Connection Failed."})
+                        this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection"})
                     });
 				}
 				else {

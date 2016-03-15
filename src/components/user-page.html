@@ -31,7 +31,7 @@
                 console.log(selectedUser)
 
 				if (!selectedUser) {
-					this.fire("showErrorMessage", {text: "No user given."})
+					this.fire("showErrorMessage", {text: "No user given.<br>Please enter a username"})
                     return;
                 }
 				console.log("time to insert a graph");
