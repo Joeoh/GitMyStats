@@ -53,14 +53,14 @@
 
                 // Make sure the fields are filled in correctly.
                 if (!url) {
-                    this.fire("showErrorMessage", {text: "No URL given."});
+                    this.fire("showErrorMessage", {text: "Please enter a URL."});
                     return;
                 }
-                if (!unixStartDate) {
+                if (!startDate) {
                     this.fire("showErrorMessage", {text: "Invalid Start Date."});
                     return;
                 }
-                if (!unixEndDate) {
+                if (!endDate) {
                     this.fire("showErrorMessage", {text: "Invalid End Date."});
                     return;
                 }
