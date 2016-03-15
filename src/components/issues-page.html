@@ -68,15 +68,15 @@
                     return;
                 }
                 if (!startDate) {
-                    this.fire("showErrorMessage", {text: "Invalid Start Date.<br>Please enter another date."});
+                    this.fire("showErrorMessage", {text: "Invalid Start Date.\nPlease enter another date."});
                     return;
                 }
                 if (!endDate) {
-                    this.fire("showErrorMessage", {text: "Invalid End Date.<br>Please enter another date."});
+                    this.fire("showErrorMessage", {text: "Invalid End Date.\nPlease enter another date."});
                     return;
                 }
 				if (singleUser && !selectedUser) {
-					this.fire("showErrorMessage", {text: "Please enter a username in the 'Users' field <br>or select 'All Users' from the dropdown"});
+					this.fire("showErrorMessage", {text: "Please enter a username in the 'Users' field \nor select 'All Users' from the dropdown"});
                     return;
                 }
 				console.log("time to isnert a graph")
