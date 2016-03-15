@@ -5,6 +5,7 @@ var assert = require("chai").assert;
 var asyncAsserts = require("./async-helper.js");
 var github = require("../src/github.js");
 
+//test github.user
 describe("GitHub API /user/:username", function() {
     it("should return a valid user", function(done) {
         github.user("barischj", function(user) {
@@ -21,6 +22,7 @@ describe("GitHub API /user/:username", function() {
     });
 });
 
+//test commits
 describe("GitHub API /repos/:owner/:repo/commits", function() {
     it("should return all commits", function(done) {
         github.commits("joeoh", "gitmystats", function(response) {
@@ -37,6 +39,7 @@ describe("GitHub API /repos/:owner/:repo/commits", function() {
     });
 });
 
+//test github.commit_activity
 describe("GitHub API /repos/:owner/:repo/stats/commit_activity", function() {
     it("should return commits in the last year by day of the week", function(done) {
         github.commit_activity("joeoh", "gitmystats", function(response) {
@@ -51,6 +54,7 @@ describe("GitHub API /repos/:owner/:repo/stats/commit_activity", function() {
     });
 });
 
+//test github.participation
 describe("GitHub API /repos/:owner/:repo/stats/participation", function() {
     it("should return commits in the last year by week", function(done) {
         github.participation("joeoh", "gitmystats", function(response) {
@@ -59,6 +63,65 @@ describe("GitHub API /repos/:owner/:repo/stats/participation", function() {
             });
         }, function() {
             asyncAsserts(done, function() {
+                assert.isOk(false, "API call failed");
+            });
+        });
+    });
+});
+
+//test github.contributors
+describe("GitHub API /repos/:owner/:repo/stats/contributors", function() {
+    it("should return all contributors", function(done) {
+        github.contributors("joeoh", "gitmystats", null, null, null, function(response){
+            asyncAsserts(done, function(){
+                assert.isOk(response.length > 0, "at least one contributor");
+            });
+        }, function() {
+            asyncAsserts(done, function() {
+                assert.isOk(false, "API call failed");
+            });
+        });
+    });
+});
+
+//test github.contributionsPerWeek
+describe("github.js contributionsPerWeek", function () {
+    it("should return contributions separated into weeks", function (done) {
+        github.contributors("joeoh", "gitmystats", null, null, null, function (contributors) {
+            var response = github.contributionsPerWeek(contributors, "c");
+            asyncAsserts(done, function () {
+                assert.isOk(response.length > 0, "at least one week of contributions");
+            })
+        }, function () {
+            asynchAsserts(done, function () {
+                assert.isOk(false, "github.js method call failed");
+            });
+        });
+    });
+});
+//test github.issues
+describe("GitHub API /repos/:owner/:repo/issues", function() {
+    it("should return all issues", function(done) {
+        github.issues("joeoh", "gitmystats", 0, null, null, function(response){
+            asyncAsserts(done, function(){
+                assert.isOk(response.length > 0, "at least one contributor");
+            });
+        }, function() {
+            asyncAsserts(done, function() {
+                assert.isOk(false, "API call failed");
+            });
+        });
+    });
+});
+//test github.punch_card
+describe("GitHub API /repos/:owner/:repo/stats/punch_card", function () {
+    it("should return punch_card data for every hour of a week", function (done) {
+        github.punch_card("joeoh", "gitmystats", function (response) {
+            asyncAsserts(done, function () {
+                assert.isOk(response.length == 168, "an entry for each hour of the week (168 hours)");
+            });
+        }, function () {
+            asyncAsserts(done, function () {
                 assert.isOk(false, "API call failed");
             });
         });

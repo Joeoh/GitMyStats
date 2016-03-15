@@ -4,7 +4,7 @@
 
     <template>
         <form id="form">
-            <label class="ms-Label">Punchard graph</label>
+            <label class="ms-fontWeight-semibold">Punchard graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
                 <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
@@ -50,7 +50,25 @@
                 console.log(singleUser)
                 var selectedUser = this.$.selectedUser.value
                 console.log(selectedUser)
-                console.log("time to insert a graph")
+
+                // Make sure the fields are filled in correctly.
+                if (!url) {
+                    this.fire("showErrorMessage", {text: "Please enter a URL."});
+                    return;
+                }
+                if (!startDate) {
+                    this.fire("showErrorMessage", {text: "Invalid Start Date."});
+                    return;
+                }
+                if (!endDate) {
+                    this.fire("showErrorMessage", {text: "Invalid End Date."});
+                    return;
+                }
+                if (singleUser && !selectedUser) {
+                    this.fire("showErrorMessage", {text: "No user given."});
+                    return;
+                }
+                console.log("time to isnert a graph")
             }
         });
     </script>

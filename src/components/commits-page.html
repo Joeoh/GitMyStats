@@ -4,7 +4,7 @@
 
     <template>
         <form>
-            <label class="ms-Label">Commits graph</label>
+            <label class="ms-fontWeight-semibold">Commits graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
                 <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
@@ -31,18 +31,40 @@
                 var owner = url.split("/")[0];
                 var repo = url.split("/")[1];
 
-                if (this.$.mode.value == "weekday") {
-                    github.commit_activity(owner, repo, function(commits) {
-                        chart.weekdayCommits(repo, commits, function(base64Image) {
+				// Make sure the URL is filled in.
+				if (!url) {
+                    this.fire("showErrorMessage", {text: "Please enter URL."})
+                    return
+                }
+                // Check for valid owner.
+                if (!owner) {
+                    this.fire("showErrorMessage", {text: "Invalid owner."})
+                    return
+                }
+                // Check for valid repo.
+                if (!repo) {
+                    this.fire("showErrorMessage", {text: "Invalid repo."})
+                    return
+                }
+				if (this.$.mode.value == "weekday") {
+                    var self = this;
+					github.commit_activity(owner, repo, function(response) {
+						chart.weekdayCommits(repo, response, function(base64Image) {
+							insertData(base64Image.replace("data:image/png;base64,",""), "image");
+						})
+					}, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection"})
+                    });
+				}
+				else {
+					github.participation(owner, repo, function(response) {
+						chart.participation(repo, response, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
                         })
-                    }, null);
-                }
-                else {
-                    github.participation(owner, repo, function(response) {
-                        console.log(response);
-                    }, null);
-                }
+					}, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed."});
+                    });
+				}
             }
         });
     </script>

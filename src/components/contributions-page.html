@@ -4,10 +4,10 @@
 
     <template>
         <form>
-            <label class="ms-Label">Contributions graph</label>
+            <label class="ms-fontWeight-semibold">Contributions graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
             </div>
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
@@ -27,14 +27,14 @@
             </div>
             <div>
                 <label class="ms-Label">Users</label>
-                <select id = "userSelect" name="userSelect">
+                <select id="userSelect" on-change="userSelectChange">
                     <option value="combined">All users</option>
                     <option value="singleUser">Single User</option>
                 </select>
             </div>
-            <div>
-                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
-            </div> 
+            <template is="dom-if" if="{{showUserInput}}">
+                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
+            </template>
             <button-pair></button-pair>
         </form>
     </template>
@@ -42,10 +42,17 @@
     <script>
         Polymer({
             is: "contributions-page",
+            // Set default values for date inputs.
             ready: function() {
                 var now = new Date()
                 this.$.endDate.valueAsDate = now
                 this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
+            },
+            properties: {
+                showUserInput: {
+                    type: Boolean,
+                    value: false
+                }
             },
             listeners: {
                 "button-pair-insert": "insert"
@@ -58,13 +65,39 @@
                 var unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
                 var mode = this.$.mode.value
                 var title = this.$.mode[this.$.mode.selectedIndex].text
-                var user = (this.$.userSelect.value == "singleUser") ? this.$.selectedUser.value : null
-                github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
-                    var points = github.contributionsPerWeek(response, mode)
-                    chart.contributors(title, points, function(base64Image) {
-                        insertData(base64Image.replace("data:image/png;base64,",""), "image");
-                    })
-                }, null);
+                var singleUser = this.$.userSelect.value == "singleUser"
+                var selectedUser = singleUser ? this.$$("#selectedUser").value : null
+
+				// Make sure the fields are filled in correctly.
+				if (!url) {
+					this.fire("showErrorMessage", {text: "Please enter URL."});
+                    return;
+                }
+                if (!unixStartDate) {
+                    this.fire("showErrorMessage", {text: "Invalid Start Date.<br>Please enter another date."});
+                    return;
+                }
+                if (!unixEndDate) {
+                    this.fire("showErrorMessage", {text: "Invalid End Date.<br>Please enter another date"});
+                    return;
+                }
+                if (singleUser && !selectedUser) {
+                    this.fire("showErrorMessage", {text: "No user given."});
+                    return;
+                }
+				github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
+					var points = github.contributionsPerWeek(response, mode)
+					chart.contributors(title, points, function(base64Image) {
+						insertData(base64Image.replace("data:image/png;base64,",""), "image");
+					})
+				}, function() {
+                    this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
+                });
+            },
+            // Show or hide the user input field depending on the value of the
+            // #userSelect dropdown.
+            userSelectChange: function() {
+                this.showUserInput = this.$.userSelect.value == "singleUser"
             }
         });
     </script>
