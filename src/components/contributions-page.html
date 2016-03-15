@@ -65,26 +65,34 @@
                 var unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
                 var mode = this.$.mode.value
                 var title = this.$.mode[this.$.mode.selectedIndex].text
-                var user = (this.$.userSelect.value == "singleUser") ? this.$.selectedUser.value : null
-				
-				//make sure the fields are filled in correctly.
-				if(!url||unixStartDate==0||unixEndDate==0){
-					if(!url){
-						this.fire("showErrorMessage",{text: "No URL given."});
-					}else if(unixStartDate==0){
-						this.fire("showErrorMessage",{text: "Please check the date for 'Start Date'."})
-					}else if(unixEndDate==0){
-						this.fire("showErrorMessage",{text: "Please check the date for 'End Date'."})
-					}
-				}else{
-					github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
-						var points = github.contributionsPerWeek(response, mode)
-						chart.contributors(title, points, function(base64Image) {
-							insertData(base64Image.replace("data:image/png;base64,",""), "image");
-						})
-					}, this.fire("showErrorMessage",{text: "Connection Failed. Please check the URL and your internet connection and try again later."}));
-				}
-				
+                var singleUser = this.$.userSelect.value == "singleUser"
+                var selectedUser = singleUser ? this.$$("#selectedUser").value : null
+
+				// Make sure the fields are filled in correctly.
+				if (!url) {
+					this.fire("showErrorMessage", {text: "No URL given."});
+                    return;
+                }
+                if (!unixStartDate) {
+                    this.fire("showErrorMessage", {text: "Invalid Start Date."});
+                    return;
+                }
+                if (!unixEndDate) {
+                    this.fire("showErrorMessage", {text: "Invalid End Date."});
+                    return;
+                }
+                if (singleUser && !selectedUser) {
+                    this.fire("showErrorMessage", {text: "No user given."});
+                    return;
+                }
+				github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
+					var points = github.contributionsPerWeek(response, mode)
+					chart.contributors(title, points, function(base64Image) {
+						insertData(base64Image.replace("data:image/png;base64,",""), "image");
+					})
+				}, function() {
+                    this.fire("showErrorMessage", {text: "Connection Failed."})
+                });
             },
             // Show or hide the user input field depending on the value of the
             // #userSelect dropdown.

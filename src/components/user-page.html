@@ -29,12 +29,12 @@
 
                 var selectedUser = this.$.selectedUser.value
                 console.log(selectedUser)
-				
-				if (!selectedUser){
-					this.fire("showErrorMessage",{text: "No user given."})
-				}else {
-					console.log("time to insert a graph")
-				}
+
+				if (!selectedUser) {
+					this.fire("showErrorMessage", {text: "No user given."})
+                    return;
+                }
+				console.log("time to insert a graph");
             }
         });
     </script>

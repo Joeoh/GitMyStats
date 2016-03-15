@@ -28,26 +28,42 @@
             },
             insert: function() {
                 var url = this.$.repositoryURL.value;
-				
-				//Make sure the URL is filled in.
-				if(url){
-					var owner = url.split("/")[0];
-					var repo = url.split("/")[1];
+                var owner = url.split("/")[0];
+                var repo = url.split("/")[1];
 
-					if (this.$.mode.value == "weekday") {
-						github.commit_activity(owner, repo, function(commits) {
-							chart.weekdayCommits(repo, commits, function(base64Image) {
-								insertData(base64Image.replace("data:image/png;base64,",""), "image");
-							})
-						}, this.fire("showErrorMessage",{text: "Connection Failed. Please check the URL and your internet connection and try again later"}));
-					}
-					else {
-						github.participation(owner, repo, function(response) {
-							console.log(response);
-						}, this.fire("showErrorMessage",{text: "Connection Failed. Please check the URL and your internet connection and try again later"}));
-					}
-				}else{
-					this.fire("showErrorMessage",{text: "No URL given."})
+				// Make sure the URL is filled in.
+				if (!url) {
+                    this.fire("showErrorMessage", {text: "No URL given."})
+                    return
+                }
+                // Check for valid owner.
+                if (!owner) {
+                    this.fire("showErrorMessage", {text: "Invalid owner."})
+                    return
+                }
+                // Check for valid repo.
+                if (!repo) {
+                    this.fire("showErrorMessage", {text: "Invalid repo."})
+                    return
+                }
+				if (this.$.mode.value == "weekday") {
+                    var self = this;
+					github.commit_activity(owner, repo, function(response) {
+						chart.weekdayCommits(repo, response, function(base64Image) {
+							insertData(base64Image.replace("data:image/png;base64,",""), "image");
+						})
+					}, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed."})
+                    });
+				}
+				else {
+					github.participation(owner, repo, function(response) {
+						chart.participation(repo, response, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
+					}, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed."});
+                    });
 				}
             }
         });

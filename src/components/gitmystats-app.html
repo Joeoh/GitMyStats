@@ -11,7 +11,20 @@
 <dom-module id="gitmystats-app">
 
     <template>
-        <span id="errorMessage" class="ms-fontColor-red ms-fontWeight-semibold">{{errorMessage}}</span>
+
+        <style>
+            .errorMessage {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                width: 150px;
+            }
+        </style>
+
+        <span id="errorMessage" class="errorMessage ms-fontColor-red ms-fontWeight-semibold">
+            {{errorMessage}}
+        </span>
         <iron-pages id="ironPages" selected="{{selectedPage}}">
             <landing-page>
                 <label class="ms-fontWeight-semibold">Choose a graph type:</label>
