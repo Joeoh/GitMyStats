@@ -7,7 +7,7 @@
             <label class="ms-fontWeight-semibold">Contributions graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
             </div>
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
@@ -66,12 +66,25 @@
                 var mode = this.$.mode.value
                 var title = this.$.mode[this.$.mode.selectedIndex].text
                 var user = (this.$.userSelect.value == "singleUser") ? this.$.selectedUser.value : null
-                github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
-                    var points = github.contributionsPerWeek(response, mode)
-                    chart.contributors(title, points, function(base64Image) {
-                        insertData(base64Image.replace("data:image/png;base64,",""), "image");
-                    })
-                }, null);
+				
+				//make sure the fields are filled in correctly.
+				if(!url||unixStartDate==0||unixEndDate==0){
+					if(!url){
+						this.fire("showErrorMessage",{text: "No URL given."});
+					}else if(unixStartDate==0){
+						this.fire("showErrorMessage",{text: "Please check the date for 'Start Date'."})
+					}else if(unixEndDate==0){
+						this.fire("showErrorMessage",{text: "Please check the date for 'End Date'."})
+					}
+				}else{
+					github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
+						var points = github.contributionsPerWeek(response, mode)
+						chart.contributors(title, points, function(base64Image) {
+							insertData(base64Image.replace("data:image/png;base64,",""), "image");
+						})
+					}, this.fire("showErrorMessage",{text: "Connection Failed. Please check the URL and your internet connection and try again later."}));
+				}
+				
             },
             // Show or hide the user input field depending on the value of the
             // #userSelect dropdown.

@@ -28,21 +28,27 @@
             },
             insert: function() {
                 var url = this.$.repositoryURL.value;
-                var owner = url.split("/")[0];
-                var repo = url.split("/")[1];
+				
+				//Make sure the URL is filled in.
+				if(url){
+					var owner = url.split("/")[0];
+					var repo = url.split("/")[1];
 
-                if (this.$.mode.value == "weekday") {
-                    github.commit_activity(owner, repo, function(commits) {
-                        chart.weekdayCommits(repo, commits, function(base64Image) {
-                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
-                        })
-                    }, null);
-                }
-                else {
-                    github.participation(owner, repo, function(response) {
-                        console.log(response);
-                    }, null);
-                }
+					if (this.$.mode.value == "weekday") {
+						github.commit_activity(owner, repo, function(commits) {
+							chart.weekdayCommits(repo, commits, function(base64Image) {
+								insertData(base64Image.replace("data:image/png;base64,",""), "image");
+							})
+						}, this.fire("showErrorMessage",{text: "Connection Failed. Please check the URL and your internet connection and try again later"}));
+					}
+					else {
+						github.participation(owner, repo, function(response) {
+							console.log(response);
+						}, this.fire("showErrorMessage",{text: "Connection Failed. Please check the URL and your internet connection and try again later"}));
+					}
+				}else{
+					this.fire("showErrorMessage",{text: "No URL given."})
+				}
             }
         });
     </script>
