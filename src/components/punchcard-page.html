@@ -50,24 +50,25 @@
                 console.log(singleUser)
                 var selectedUser = this.$.selectedUser.value
                 console.log(selectedUser)
-				
-				//Check to make sure all fields are filled in
-                if (!(url||startDate||endDate)){
-					if(!url)
-						this.fire("showErrorMessage", {text: "No user/repo given."})
-					else if(!startDate){
-						this.fire("showErrorMessage",{text: "No Start Date given."})
-					}
-					else if (!endDate){
-						this.fire("showErrorMessage",{text: "No End Date given."})
-					}
-				}else if (!(singleUser && selectedUser)){
-					this.fire("showErrorMessage",{text: "No user given."})
-				
-				//if all values are there, continue on.
-				} else{
-					console.log("time to isnert a graph")
-				}
+
+                // Make sure the fields are filled in correctly.
+                if (!url) {
+                    this.fire("showErrorMessage", {text: "No URL given."});
+                    return;
+                }
+                if (!unixStartDate) {
+                    this.fire("showErrorMessage", {text: "Invalid Start Date."});
+                    return;
+                }
+                if (!unixEndDate) {
+                    this.fire("showErrorMessage", {text: "Invalid End Date."});
+                    return;
+                }
+                if (singleUser && !selectedUser) {
+                    this.fire("showErrorMessage", {text: "No user given."});
+                    return;
+                }
+                console.log("time to isnert a graph")
             }
         });
     </script>

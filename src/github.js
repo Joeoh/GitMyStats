@@ -43,7 +43,7 @@ var formIssueQueryString = function(state, milestone, label){
         default:
             stateQuery = "";
     }
-        
+
     var milestoneQuery;
     if (milestone === null || milestone <= 0)
         milestoneQuery = "";
@@ -99,11 +99,11 @@ var github = {
     },
     /**
      * GET /repos/:owner/:repo/stats/participation
-     * @return {Array} Commits per week for the last year, starting at most recent week.
+     * @return {Array} Commits per week for the last year, oldest week first.
      */
     participation: function(owner, repo, onsuccess, onfail) {
         $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/participation", function(response) {
-            onsuccess(response.all.reverse());
+            onsuccess(response.all);
         }).fail(function() {
             onfail();
         });
@@ -119,7 +119,7 @@ var github = {
             onfail();
         });
     },
-    // 
+    //
     // start_week, end_week: week numbers given as a Unix timestamp https://en.wikipedia.org/wiki/Unix_time
     // start_week: if null indicated the beginning of time
     // end_week: if null specifies now
