@@ -47,6 +47,19 @@ var chart = {
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create("line", data, {}, callback)
   },
+  participation: function(repo, weeks, callback) {
+    var date = new Date()
+    date.setDate(date.getDate() - 365);
+    var data = []
+    for (var i in weeks) {
+      data.push([date.getDate() + "/" + (date.getFullYear() + "").substring(2, 4), weeks[i]])
+      date.setDate(date.getDate() + 7);
+    }
+    var data = this._toChartData(data)
+    data.datasets[0].label = "commits by week to " + repo
+    data.datasets[0].backgroundColor = "#88D3A1"
+    this._create("bar", data, {}, callback)
+  },
   // points: [[value, label]]
   pie: function(points, callback) {
     var data = this._toChartData(points)
@@ -100,7 +113,7 @@ var chart = {
     return data
   },
   // Return `amount` hex color strings evenly distributed by hue with saturation
-  // in [90, 100) and lightness in [50, 60). 
+  // in [90, 100) and lightness in [50, 60).
   _uniqueHexColors: function(amount) {
     var colors = []
     for (var i = 0; i < 360; i += 360 / amount) {

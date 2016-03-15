@@ -48,8 +48,8 @@
                 }
 				if (this.$.mode.value == "weekday") {
                     var self = this;
-					github.commit_activity(owner, repo, function(commits) {
-						chart.weekdayCommits(repo, commits, function(base64Image) {
+					github.commit_activity(owner, repo, function(response) {
+						chart.weekdayCommits(repo, response, function(base64Image) {
 							insertData(base64Image.replace("data:image/png;base64,",""), "image");
 						})
 					}, function() {
@@ -58,7 +58,9 @@
 				}
 				else {
 					github.participation(owner, repo, function(response) {
-						console.log(response);
+						chart.participation(repo, response, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
 					}, function() {
                         this.fire("showErrorMessage", {text: "Connection Failed."});
                     });
