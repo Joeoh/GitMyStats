@@ -48,8 +48,6 @@
             insert: function() {
                 var url = this.$.repositoryURL.value
                 console.log("!url: " + !url)
-                if (!url)
-                    this.fire("showErrorMessage", {text: "No user/repo given."})
                 console.log(url)
                 var startDate = this.$.startDate.value
                 console.log(startDate)
@@ -63,7 +61,19 @@
                 console.log(singleUser)
                 var selectedUser = this.$.selectedUser.value
                 console.log(selectedUser)
-                console.log("time to isnert a graph")
+                if (!(url||startDate||endDate)){
+					if(!url)
+						this.fire("showErrorMessage", {text: "No user/repo given."})
+					else if(!startDate){
+						this.fire("showErrorMessage",{text: "No Start Date given."})
+					}
+					else if (!endDate{
+						this.fire("showErrorMessage",{text: "No End Date Given."})
+					}
+					
+				} else{
+					console.log("time to isnert a graph")
+				}
             }
         });
     </script>
