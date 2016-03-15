@@ -70,15 +70,15 @@
 
 				// Make sure the fields are filled in correctly.
 				if (!url) {
-					this.fire("showErrorMessage", {text: "No URL given."});
+					this.fire("showErrorMessage", {text: "Please enter URL."});
                     return;
                 }
                 if (!unixStartDate) {
-                    this.fire("showErrorMessage", {text: "Invalid Start Date."});
+                    this.fire("showErrorMessage", {text: "Invalid Start Date.<br>Please enter another date."});
                     return;
                 }
                 if (!unixEndDate) {
-                    this.fire("showErrorMessage", {text: "Invalid End Date."});
+                    this.fire("showErrorMessage", {text: "Invalid End Date.<br>Please enter another date"});
                     return;
                 }
                 if (singleUser && !selectedUser) {
@@ -91,7 +91,7 @@
 						insertData(base64Image.replace("data:image/png;base64,",""), "image");
 					})
 				}, function() {
-                    this.fire("showErrorMessage", {text: "Connection Failed."})
+                    this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
                 });
             },
             // Show or hide the user input field depending on the value of the
