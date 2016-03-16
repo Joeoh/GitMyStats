@@ -2,6 +2,8 @@
 
 $app-width: 200px;
 $content-width: 175px;
+$sml-margin: 3px;
+$lrg-margin: 12px;
 
 html, body {
     height: 100%;
@@ -21,20 +23,33 @@ gitmystats-app {
     max-width: $app-width;
 }
 
-.homeButton {
-    margin-top: 3px;
-    height: 60px;
-    width: $content-width;
-}
-
-.buttonPair {
-    margin-top: 5px;
-}
-
 .errorMessage {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: $content-width;
+}
+
+.homeButton {
+    margin-top: $sml-margin;
+    height: 60px;
+    width: $content-width;
+}
+
+.sml-margin-top {
+    margin-top: $sml-margin;
+}
+
+.lrg-margin-top {
+    margin-top: $lrg-margin;
+}
+
+.wide-button {
+    height: 30px;
+    width: $app-width;
+}
+
+.hidden {
+    display: none;
 }

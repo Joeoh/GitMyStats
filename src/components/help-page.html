@@ -1,58 +1,64 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <dom-module id="help-page">
-  
-  <template>  
-  <!-- add all html page design stuff here. -->
-    <div class="help-page">
-      <div>
-        Help page.
-      </div>
-    </div>
-    <div>
-        Commits
-    </div>
-    <div>
-       <label class="ms-Label">This will create a graph of commits to a specified repository.</label>
-    </div>
-    <br>
-    <div>
-       Contributions
-    </div>
-    <div>
-      <label class="ms-Label"> This will create a graph of contributions made to a repository in a specified timeframe.</label>
-    </div>
-    <br>
-    <div>
-       Punchcard
-    </div>
-     <div>
-      <label class="ms-Label"> This will create a punchcard view displaying whether or not commits were made to a repository on any day in a specified timeline.</label>
-    </div>
-    <br>
-    <div>x
-       Issues
-    </div>
-      <div>
-      <label class="ms-Label"> This will create a list of current standing issues in the repository.</label>
-    </div>
-    <br>
-    <div>
-        User Profiles
-    </div>
-    <div>
-      <label class="ms-Label"> This will show user-specific data.</label>
-    </div>
 
-     <smallButton on-click="cancel" class="ms-Button host-button">
-       <span class="ms-Button-label">Back to Menu</span>
-     </smallButton>
+  <template>
+
+    <style>
+      .back-button {
+        /*margin-top: 8px;*/
+      }
+    </style>
+
+    <label class="ms-fontWeight-semibold">Help Page</label>
+    <button class="ms-Button host-button wide-button help-button">
+      <span class="ms-Button-label">Commits</span>
+    </button>
+    <p class="ms-Label help-text">
+      This will create a graph of commits to a specified repository.
+    </p>
+    <button class="ms-Button host-button wide-button help-button sml-margin-top">
+      <span class="ms-Button-label">Contributions</span>
+    </button>
+    <p class="ms-Label hidden help-text">
+      This will create a graph of contributions made to a repository in a specified timeframe.
+    </p>
+    <button class="ms-Button host-button wide-button help-button sml-margin-top">
+      <span class="ms-Button-label">Punch Card</span>
+    </button>
+    <p class="ms-Label hidden help-text">
+      This will create a punchcard view displaying whether or not commits were made to a repository on any day in a specified timeline.
+    </p>
+    <button class="ms-Button host-button wide-button help-button sml-margin-top">
+      <span class="ms-Button-label">Issues</span>
+    </button>
+    <p class="ms-Label hidden help-text">
+      This will create a list of current standing issues in the repository.
+    </p>
+    <button class="ms-Button host-button wide-button help-button sml-margin-top">
+      <span class="ms-Button-label">User Profile</span>
+    </button>
+    <p class="ms-Label hidden help-text">
+      This will show user-specific data.
+    </p>
+    <button on-click="cancel"
+            class="ms-Button host-button wide-button back-button lrg-margin-top">
+      <span class="ms-Button-label">Back</span>
+    </button>
   </template>
 
   <Script>
     Polymer({
       is: "help-page",
-            cancel: function() { this.fire("toLandingPage") }
-    });
+      ready: function() {
+        // set ".help-button"s to toggle ".help-text"s
+        $(this).ready(function(){
+          $(".help-button").click(function() {
+            $(this).next(".help-text").slideToggle("fast")
+          })
+        })
+      },
+      cancel: function() { this.fire("toLandingPage") }
+    })
   </Script>
 </dom-module>

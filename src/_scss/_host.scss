@@ -35,3 +35,8 @@
         @include ms-borderColor-redDark;
     }
 }
+
+.word .help-header  {
+    @include ms-bgColor-blue;
+    @include ms-borderColor-blue;
+}
