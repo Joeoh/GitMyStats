@@ -85,7 +85,7 @@
                     this.fire("showErrorMessage", {text: "No user given."});
                     return;
                 }
-				github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
+				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
 					var points = github.contributionsPerWeek(response, mode)
 					chart.contributors(title, points, function(base64Image) {
 						insertData(base64Image.replace("data:image/png;base64,",""), "image");
