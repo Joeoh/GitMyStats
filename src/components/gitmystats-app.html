@@ -11,23 +11,12 @@
 <dom-module id="gitmystats-app">
 
     <template>
-
-        <style>
-            .errorMessage {
-                display: block;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                width: 150px;
-            }
-        </style>
-
         <span id="errorMessage" class="errorMessage ms-fontColor-red ms-fontWeight-semibold">
             {{errorMessage}}
         </span>
         <iron-pages id="ironPages" selected="{{selectedPage}}">
             <landing-page>
-                <label class="ms-fontWeight-semibold">Choose a graph type:</label>
+                <label class="ms-fontWeight-semibold">Choose a Graph Type</label>
                 <div>
                     <button on-click="toCommits" class="ms-Button host-button homeButton">
                         <span class="ms-Button-label">Commits</span>
@@ -53,9 +42,9 @@
                         <span class="ms-Button-label">User Profile</span>
                     </button>
                 </div>
-                <br>
                 <div>
-                    <button id="helpButton" on-click="toHelp" class="ms-Button host-button homeButton">
+                    <button id="helpButton" on-click="toHelp"
+                            class="ms-Button host-button homeButton lrg-margin-top">
                         <span class="ms-Button-label">Help</span>
                     </button>
                 </div>
