@@ -60,8 +60,8 @@
                     </button>
                 </div>
             </landing-page>
-            <commits-page></commits-page>
-            <contributions-page></contributions-page>
+            <commits-page repo="{{repo}}"></commits-page>
+            <contributions-page repo="{{repo}}"></contributions-page>
             <punchcard-page></punchcard-page>
             <issues-page></issues-page>
             <user-page></user-page>
@@ -81,6 +81,10 @@
                 errorMessageTimeoutId: {
                     type: Number,
                     value: -1
+                },
+                repo: {
+                    type: String,
+                    value: "joeoh/GitMyStats"
                 },
                 // The index of the page currently being displayed.
                 selectedPage: {
