@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+c<link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <dom-module id="issues-page">
 
@@ -46,6 +46,10 @@
                 "button-pair-insert": "insert"
             },
             properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                },
                 showUserInput: {
                     type: Boolean,
                     value: false

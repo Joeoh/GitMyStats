@@ -37,6 +37,12 @@
             listeners: {
                 "button-pair-insert": "insert"
             },
+            properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                }
+            },
             insert: function() {
                 var url = this.$.repositoryURL.value
                 console.log(url)
