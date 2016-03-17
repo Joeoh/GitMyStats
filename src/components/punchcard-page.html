@@ -7,7 +7,7 @@
             <label class="ms-fontWeight-semibold">Punchard graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
@@ -36,6 +36,12 @@
             is: "punchcard-page",
             listeners: {
                 "button-pair-insert": "insert"
+            },
+            properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                }
             },
             insert: function() {
                 var url = this.$.repositoryURL.value

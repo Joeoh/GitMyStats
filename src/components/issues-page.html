@@ -7,7 +7,7 @@
             <label class="ms-fontWeight-semibold">Issues graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
@@ -27,14 +27,14 @@
             </div>
             <div>
                 <label class="ms-Label">Users</label>
-                <select id = "userSelect" name="userSelect">
+                <select id = "userSelect" name="userSelect" on-change="userSelectChange">
                     <option value="combined">All users</option>
                     <option value="singleUser">Single User</option>
                 </select>
             </div>
-            <div>
-                <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
-            </div>
+            <template is="dom-if" if="{{showUserInput}}" >
+                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
+            </template>
             <button-pair></button-pair>
         </form>
     </template>
@@ -44,6 +44,16 @@
             is: "issues-page",
             listeners: {
                 "button-pair-insert": "insert"
+            },
+            properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                },
+                showUserInput: {
+                    type: Boolean,
+                    value: false
+                }
             },
             insert: function() {
                 var url = this.$.repositoryURL.value
@@ -80,6 +90,11 @@
                     return;
                 }
 				console.log("time to isnert a graph")
+            },
+            // Show or hide the user input field depending on the value of the
+            // #userSelect dropdown.
+            userSelectChange: function() {
+                this.showUserInput = this.$.userSelect.value == "singleUser"
             }
         });
     </script>
