@@ -7,7 +7,7 @@
             <label class="ms-fontWeight-semibold">Contributions graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
@@ -49,6 +49,10 @@
                 this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
             },
             properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                },
                 showUserInput: {
                     type: Boolean,
                     value: false
@@ -85,7 +89,7 @@
                     this.fire("showErrorMessage", {text: "No user given."});
                     return;
                 }
-				github.contributors(owner, repo, unixStartDate, unixEndDate, user, function(response) {
+				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
 					var points = github.contributionsPerWeek(response, mode)
 					chart.contributors(title, points, function(base64Image) {
 						insertData(base64Image.replace("data:image/png;base64,",""), "image");

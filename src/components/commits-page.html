@@ -7,7 +7,7 @@
             <label class="ms-fontWeight-semibold">Commits graph</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" value="joeoh/GitMyStats" class="ms-TextField-field">
+                <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
             <div>
                 <label class="ms-Label">By Weekday Or Week</label>
@@ -25,6 +25,12 @@
             is: "commits-page",
             listeners: {
                 "button-pair-insert": "insert"
+            },
+            properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                }
             },
             insert: function() {
                 var url = this.$.repositoryURL.value;

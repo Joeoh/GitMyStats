@@ -1,3 +1,10 @@
+/* Variables */
+
+$app-width: 200px;
+$content-width: 175px;
+$sml-margin: 3px;
+$lrg-margin: 12px;
+
 html, body {
     height: 100%;
     width: 100%;
@@ -12,27 +19,35 @@ body {
     margin: 0;
 }
 
-form {
-    @include placeholder-color($ms-color-neutralTertiary);
-    width: 180px;
-    button {
-        margin-top: 5px;
-        width: 100%;
-    }
-    smallButton{
-        margin-top: 5px;
-        width: 45%;
-    }
+gitmystats-app {
+    max-width: $app-width;
+}
+
+.errorMessage {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: $content-width;
 }
 
 .homeButton {
-    margin-bottom: 3px;
+    margin-top: $sml-margin;
     height: 60px;
-    width: 175px;
+    width: $content-width;
 }
 
-.buttonPair {
-    margin-top: 5px;
+.sml-margin-top {
+    margin-top: $sml-margin;
+}
+
+.lrg-margin-top {
+    margin-top: $lrg-margin;
+}
+
+.wide-button {
+    height: 30px;
+    width: $app-width;
 }
 
 .hidden {
