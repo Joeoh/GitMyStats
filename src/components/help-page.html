@@ -40,6 +40,11 @@
     </button>
   </template>
 
+  <!-- $(".marker").hover(function(event){
+    var nextEl = $(this).next("div.tooltips");
+    $('.tooltip').not(nextEl).hide();
+    $(this).next('.tooltip').slideDown('fast');
+}); -->
   <Script>
     Polymer({
       is: "help-page",
@@ -47,7 +52,12 @@
         // set ".help-button"s to toggle ".help-text"s
         $(this).ready(function(){
           $(".help-button").click(function() {
-            $(this).next(".help-text").slideToggle("fast")
+            var next = $(this).next(".help-text")
+            // if opening the clicked help section
+            if ($(next).is(":hidden"))
+              // close anything that's not hidden
+              $(".help-text").not(":hidden").slideToggle("fast")
+            $(next).slideToggle("fast")
           })
         })
       },
