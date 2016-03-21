@@ -32,6 +32,9 @@
                     <option value="singleUser">Single User</option>
                 </select>
             </div>
+            <template is="dom-if" if="{{showUserInput}}">
+                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
+            </template>
             <div>
                 <label class="ms-Label">Chart Type</label>
                 <select id="chartType">
@@ -39,9 +42,6 @@
                     <option value="line">Line</option>
                 </select>
             </div>
-            <template is="dom-if" if="{{showUserInput}}">
-                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
-            </template>
             <button-pair></button-pair>
         </form>
     </template>

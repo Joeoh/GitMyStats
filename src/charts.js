@@ -47,18 +47,30 @@ var chart = {
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create("line", data, {}, callback)
   },
-  participation: function(repo, weeks, callback) {
+  /*
+   * Generates a base 64 encoded image of a chart. The image is manipulated with
+   * a callback.
+   *
+   * Args:
+   *   repo: String, the title of the repository.
+   *   weeks: [Number], commits per week with index 0 the most recent week.
+   *   type: String, the type of chart to create.
+   *   callback: Function, function that takes the image as first argument.
+   */
+  participation: function(repo, weeks, type, callback) {
+    // create an array of [[label, value]]
     var date = new Date()
-    date.setDate(date.getDate() - 365);
+    date.setDate(date.getDate() - 365)
     var data = []
     for (var i in weeks) {
       data.push([date.getDate() + "/" + (date.getFullYear() + "").substring(2, 4), weeks[i]])
-      date.setDate(date.getDate() + 7);
+      date.setDate(date.getDate() + 7)
     }
+    // create parameters suitable for Chart.js
     var data = this._toChartData(data)
     data.datasets[0].label = "Weekly commits to: " + repo
     data.datasets[0].backgroundColor = "#88D3A1"
-    this._create("bar", data, {}, callback)
+    this._create(type, data, {}, callback)
   },
   // points: [[value, label]]
   pie: function(points, callback) {
