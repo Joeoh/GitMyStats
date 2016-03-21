@@ -51,8 +51,7 @@ var chart = {
       ["Saturday", commits[6]]
     ]
     data = this._toChartData(data)
-    data.datasets[0].fill = false
-    data.datasets[0].label = "Commits by weekday to: " + repo
+    data.datasets[0].label = "Commits to " + repo
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create(type, data, {}, callback)
   },
@@ -78,7 +77,7 @@ var chart = {
     data = data.trimEnds(function(x) { return !x[1] })
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)
-    data.datasets[0].label = "Weekly commits to: " + repo
+    data.datasets[0].label = "Commits to " + repo
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create(type, data, {}, callback)
   },

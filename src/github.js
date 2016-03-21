@@ -23,17 +23,16 @@ var github = {
      */
     commit_activity: function(owner, repo, onsuccess, onfail) {
         $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function(response) {
-            console.log(response)
-            var days = [0, 0, 0, 0, 0, 0, 0];
+            var days = [0, 0, 0, 0, 0, 0, 0]
             for (var i = 0; i < response.length; i++) {
-                for (var day = 0; day < response[i].length; day++) {
-                    days[day] += response[i].days[day];
+                for (var j = 0; j < 7; j++) {
+                    days[j] += response[i].days[j]
                 }
             }
-            onsuccess(days);
+            onsuccess(days)
         }).fail(function() {
-            onfail();
-        });
+            onfail()
+        })
     },
     /*
      * Return contributions per week for a repoistory.
