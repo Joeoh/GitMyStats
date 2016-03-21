@@ -14,56 +14,41 @@
         <span id="errorMessage" class="errorMessage ms-fontColor-red ms-fontWeight-semibold">
             {{errorMessage}}
         </span>
-        <iron-pages id="ironPages" selected="{{selectedPage}}">
-            <landing-page>
+        <iron-pages id="ironPages" attr-for-selected="name" selected="{{selectedPage}}">
+            <landing-page name="landingPage">
                 <label class="ms-fontWeight-semibold">Choose a Graph Type</label>
-                <div>
-                    <button on-click="toCommits" class="ms-Button host-button homeButton">
-                        <span class="ms-Button-label">Commits</span>
-                    </button>
-                </div>
-                <div>
-                    <button on-click="toContributions" class="ms-Button host-button homeButton">
-                        <span class="ms-Button-label">Contributions</span>
-                    </button>
-                </div>
-                <div>
-                    <button on-click="toPunchcard" class="ms-Button host-button homeButton">
-                        <span class="ms-Button-label">Punchcard</span>
-                    </button>
-                </div>
-                <div>
-                    <button on-click="toIssues" class="ms-Button host-button homeButton">
-                        <span class="ms-Button-label">Issues</span>
-                    </button>
-                </div>
-                <div>
-                    <button on-click="toUser" class="ms-Button host-button homeButton">
-                        <span class="ms-Button-label">User Profile</span>
-                    </button>
-                </div>
-                <div>
-                    <button id="helpButton" on-click="toHelp"
-                            class="ms-Button host-button homeButton lrg-margin-top">
-                        <span class="ms-Button-label">Help</span>
-                    </button>
-                </div>
+                <button on-click="toCommits" class="ms-Button host-button homeButton">
+                    <span class="ms-Button-label">Commits</span>
+                </button>
+                <button on-click="toContributions" class="ms-Button host-button homeButton">
+                    <span class="ms-Button-label">Contributions</span>
+                </button>
+                <button on-click="toPunchcard" class="ms-Button host-button homeButton">
+                    <span class="ms-Button-label">Punchcard</span>
+                </button>
+                <button on-click="toIssues" class="ms-Button host-button homeButton">
+                    <span class="ms-Button-label">Issues</span>
+                </button>
+                <button on-click="toUser" class="ms-Button host-button homeButton">
+                    <span class="ms-Button-label">User Profile</span>
+                </button>
+                <button on-click="toHelp"
+                        class="ms-Button host-button homeButton lrg-margin-top">
+                <span class="ms-Button-label">Help</span>
+                </button>
             </landing-page>
-            <commits-page repo="{{repo}}"></commits-page>
-            <contributions-page repo="{{repo}}"></contributions-page>
-            <punchcard-page repo="{{repo}}"></punchcard-page>
-            <issues-page repo="{{repo}}"></issues-page>
-            <user-page></user-page>
-            <help-page></help-page>
+            <commits-page id="poo" name="commitsPage" repo="{{repo}}"></commits-page>
+            <contributions-page name="contributionsPage" repo="{{repo}}"></contributions-page>
+            <punchcard-page name="punchcardPage" repo="{{repo}}"></punchcard-page>
+            <issues-page name="issuesPage" repo="{{repo}}"></issues-page>
+            <user-page name="userPage" ></user-page>
+            <help-page name="helpPage" ></help-page>
         </iron-pages>
     </template>
 
     <script>
         Polymer({
             is: "gitmystats-app",
-            ready: function() {
-                this.toIssues()
-            },
             properties: {
                 // The amount of time to display an error message for.
                 errorMessageTime: {
@@ -76,25 +61,18 @@
                 },
                 repo: {
                     type: String,
-                    value: "joeoh/GitMyStats"
+                    value: "joeoh/gitmystats"
                 },
                 // The index of the page currently being displayed.
                 selectedPage: {
-                    type: Number,
-                    value: 0
+                    type: String,
+                    value: "landingPage"
                 }
             },
             listeners: {
                 "showErrorMessage": "showErrorMessage",
                 "toLandingPage": "toLandingPage"
             },
-            toLandingPage: function() { this.selectedPage = 0 },
-            toCommits: function() { this.selectedPage = 1 },
-            toContributions: function() { this.selectedPage = 2 },
-            toPunchcard: function() { this.selectedPage = 3 },
-            toIssues: function() { this.selectedPage = 4 },
-            toUser: function() { this.selectedPage = 5 },
-            toHelp: function() { this.selectedPage = 6 },
             // Show the error message in `detail.text` for `errorMessageTime`.
             showErrorMessage: function(_, detail) {
                 clearTimeout(this.errorMessageTimeoutId)
@@ -105,6 +83,14 @@
                     self.$.errorMessage.style.visibility = "hidden"
                 }, self.errorMessageTime)
             },
+            // Functions for changing pages.
+            toLandingPage: function() { this.selectedPage = "landingPage" },
+            toCommits: function() { this.selectedPage = "commitsPage" },
+            toContributions: function() { this.selectedPage = "contributionsPage" },
+            toPunchcard: function() { this.selectedPage = "punchcardPage" },
+            toIssues: function() { this.selectedPage = "issuesPage" },
+            toUser: function() { this.selectedPage = "userPage" },
+            toHelp: function() { this.selectedPage = "helpPage" },
         });
     </script>
 
