@@ -61,6 +61,9 @@
     <script>
         Polymer({
             is: "gitmystats-app",
+            ready: function() {
+                this.toIssues()
+            },
             properties: {
                 // The amount of time to display an error message for.
                 errorMessageTime: {

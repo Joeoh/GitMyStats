@@ -3,40 +3,47 @@
 <dom-module id="issues-page">
 
     <template>
-        <form id="form">
-            <label class="ms-fontWeight-semibold">Issues graph</label>
-            <div class="ms-TextField">
-                <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
-            </div>
-            <div class="ms-TextField">
-                <label class="ms-Label">Start Date</label>
-                <input  id="startDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
-            </div>
-            <div class="ms-TextField">
-                <label class="ms-Label">End Date</label>
-                <input  id="endDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
-            </div>
-            <div>
-                <label class="ms-Label">Opened/Closed</label>
-                <select id = "mode" name="contributionType">
-                    <option value="combined">Combined</option>
-                    <option value="opened">Opened</option>
-                    <option value="closed">Closed</option>
-                </select>
-            </div>
-            <div>
-                <label class="ms-Label">Users</label>
-                <select id = "userSelect" name="userSelect" on-change="userSelectChange">
-                    <option value="combined">All users</option>
-                    <option value="singleUser">Single User</option>
-                </select>
-            </div>
-            <template is="dom-if" if="{{showUserInput}}" >
-                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
-            </template>
-            <button-pair></button-pair>
-        </form>
+        <label class="ms-fontWeight-semibold">Issues</label>
+        <!-- owner and repo -->
+        <div class="ms-TextField">
+            <label class="ms-Label">Owner and Repo</label>
+            <input id="repoOwner" value="{{repo::input}}" class="ms-TextField-field">
+        </div>
+        <!-- milestone -->
+        <label class="ms-Label">Milestone</label>
+        <input id="milestone" class="ms-TextField-field">
+        <!-- state: open, closed or all -->
+        <label class="ms-Label">Opened, Closed or All</label>
+        <select id="state">
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+            <option value="all">All</option>
+        </select>
+        <!-- assignee -->
+        <label class="ms-Label">Assignee</label>
+        <input id="assignee" class="ms-TextField-field">
+        <!-- labels -->
+        <label class="ms-Label">Labels (comma separated)</label>
+        <input id="labels" class="ms-TextField-field">
+        <!-- sort -->
+        <label class="ms-Label">Sort By</label>
+        <select id="sort">
+            <option value="created">Created</option>
+            <option value="updated">Updated</option>
+            <option value="comment">Comment</option>
+        </select>
+        <!-- sort direction -->
+        <label class="ms-Label">Sort Direction</label>
+        <select id="sortDirection">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <!-- since -->
+        <div>
+            <label class="ms-Label">Max Results</label>
+            <input id="max" type="number" value="10" min="1">
+        </div>
+        <button-pair></button-pair>
     </template>
 
     <script>
@@ -49,47 +56,34 @@
                 repo: {
                     type: String,
                     notify: true
-                },
-                showUserInput: {
-                    type: Boolean,
-                    value: false
                 }
             },
             insert: function() {
-                var url = this.$.repositoryURL.value
-                console.log("!url: " + !url)
-                console.log(url)
-                var startDate = this.$.startDate.value
-                console.log(startDate)
-                var endDate = this.$.endDate.value
-                console.log(endDate)
-                var mode = this.$.mode.value
-                console.log(mode)
-                //singleUser is boolean true if dropdown selection is singleUser
-                // otherwise calculate graph for all users
-                var singleUser = this.$.userSelect.value == "singleUser"
-                console.log(singleUser)
-                var selectedUser = this.$.selectedUser.value
-                console.log(selectedUser)
+                // (owner, repo, milestone, state, assignee, labels, sort, direction, since, onsuccess, onfail)
+                const url = this.$.repoOwner.value
+                const owner = url.split("/")[0]
+                const repo = url.split("/")[1]
+                const milestone = this.$.milestone.value
+                const state = this.$.state.value
+                const assignee = this.$.assignee.value
+                const labels = this.$.labels.value.split(",").map(function(x) {
+                    return x.trim()
+                })
+                const sort = this.$.sort.value
+                const direction = this.$.sortDirection.value
+                const max = parseInt(this.$.max.value)
 
-                // Make sure the fields are filled in correctly.
                 if (!url) {
                     this.fire("showErrorMessage", {text: "Please enter a URL."});
                     return;
                 }
-                if (!startDate) {
-                    this.fire("showErrorMessage", {text: "Invalid Start Date.<br>Please enter another date."});
-                    return;
-                }
-                if (!endDate) {
-                    this.fire("showErrorMessage", {text: "Invalid End Date.<br>Please enter another date."});
-                    return;
-                }
-				if (singleUser && !selectedUser) {
-					this.fire("showErrorMessage", {text: "Please enter a username in the 'Users' field <br>or select 'All Users' from the dropdown"});
-                    return;
-                }
-				console.log("time to isnert a graph")
+				github.issues(owner, repo, milestone, state, assignee, labels,
+                              sort, direction, max, function(response) {
+                    console.log(response)
+                    console.log("do something here")
+                }, function() {
+                    this.fire("showErrorMessage", {text: "GitHub API request failed"})
+                })
             },
             // Show or hide the user input field depending on the value of the
             // #userSelect dropdown.

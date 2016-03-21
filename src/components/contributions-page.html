@@ -53,7 +53,7 @@
             ready: function() {
                 var now = new Date()
                 this.$.endDate.valueAsDate = now
-                this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
+                this.$.startDate.valueAsDate = now.setFullYear(now.getFullYear() - 1)
             },
             properties: {
                 // the current user/repo string
@@ -99,10 +99,9 @@
                     this.fire("showErrorMessage", {text: "No user given."});
                     return;
                 }
-				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
-					var points = github.contributionsPerWeek(response, mode)
-					chart.contributors(title, points, chartType, function(base64Image) {
-						insertData(base64Image.replace("data:image/png;base64,",""), "image");
+				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, mode, function(response) {
+					chart.contributors(title, response, chartType, function(base64Image) {
+						insertData(base64Image.replace("data:image/png;base64,", ""), "image");
 					})
 				}, function() {
                     this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})

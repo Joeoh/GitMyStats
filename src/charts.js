@@ -34,7 +34,16 @@ var chart = {
     }
     this._create(type, data, options, callback)
   },
-  weekdayCommits: function(repo, commits, callback) {
+  /*
+   * Generate a base 64 encoded image of a chart of commits by day of the week.
+   *
+   * Args:
+   *   repo: String, the title of the repository.
+   *   commits: [Number], commits per day of the week starting on Sunday.
+   *   type: String, the type of chart to create.
+   *   callback: Function, callback that takes the image as first argument.
+   */
+  weekdayCommits: function(repo, commits, type, callback) {
     var data = [
       ["Sunday", commits[0]], ["Monday", commits[1]],
       ["Tuesday", commits[2]], ["Wednesday", commits[3]],
@@ -45,7 +54,7 @@ var chart = {
     data.datasets[0].fill = false
     data.datasets[0].label = "Commits by weekday to: " + repo
     data.datasets[0].backgroundColor = "#88D3A1"
-    this._create("line", data, {}, callback)
+    this._create(type, data, {}, callback)
   },
   /*
    * Generate a base 64 encoded image of a chart of commits per week.
