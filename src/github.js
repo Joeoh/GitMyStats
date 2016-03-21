@@ -15,61 +15,6 @@
       console.log("failed")
     });
 */
-const OPEN = 1;
-const CLOSED = -1;
-const ALL = 0;
-
-//checks if a unix timestamp is within two others inclusively.
-var withinTime = function(start_week, end_week, input_week){
-    return ((start_week === null && end_week === null) ||
-            (start_week === null && input_week <= end_week ) ||
-            (start_week <= input_week && end_week === null) ||
-            (start_week <= input_week && input_week <= end_week))
-};
-
-var formIssueQueryString = function(state, milestone, label){
-
-    var stateQuery = "state=";                          //form individual queries
-    switch (state) {
-        case OPEN:
-            stateQuery += "open";
-            break;
-        case CLOSED:
-            stateQuery += "closed";
-            break;
-        case ALL:
-            stateQuery = "";
-            break;
-        default:
-            stateQuery = "";
-    }
-
-    var milestoneQuery;
-    if (milestone === null || milestone <= 0)
-        milestoneQuery = "";
-    else
-        milestoneQuery = "milestone=" + milestone;
-
-    var labelQuery;
-    if (label === null)
-        labelQuery = "";
-    else
-        labelQuery = label;
-
-    var queryString = "?" + stateQuery;                //correctly concatenate queries
-    if (queryString === "?")
-        queryString += milestoneQuery;
-    else if (milestoneQuery !== "")
-        queryString += "&" + milestoneQuery;
-    if (queryString === "?")
-        queryString += labelQuery;
-    else if (labelQuery !== "")
-        queryString += "&" + labelQuery;
-    if (queryString === "?")
-        queryString = "";
-
-    return queryString;
-};
 
 var github = {
     /**
@@ -78,9 +23,10 @@ var github = {
      */
     commit_activity: function(owner, repo, onsuccess, onfail) {
         $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function(response) {
+            console.log(response)
             var days = [0, 0, 0, 0, 0, 0, 0];
-            for (var i in response) {
-                for (var day in response[i].days) {
+            for (var i = 0; i < response.length; i++) {
+                for (var day = 0; day < response[i].length; day++) {
                     days[day] += response[i].days[day];
                 }
             }
@@ -89,13 +35,53 @@ var github = {
             onfail();
         });
     },
-    // GET /repos/:owner/:repo/collaborators
-    commits: function(owner, repo, onsuccess, onfail) {
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/commits", function(response) {
-            onsuccess(response);
+    /*
+     * Return contributions per week for a repoistory.
+     *
+     * Args:
+     *   owner: String, owner of the repository.
+     *   repo: String, name of the repository.
+     *   start_week: Number, earlist allowed week.
+     *   end_week: Number, most recent allowed week.
+     *   user: null|String, null to indicate all users else a specific user.
+     *   type: String, "a", "d", or "c" for additions, deletions or combined.
+     *   onsuccess: Function, callback to call on success.
+     *   onfail: Function, callback to call on failure.
+     *
+     * Return:
+     *   [[Date, Number]], an array of contributions per week.
+     */
+    contributors: function (owner, repo, start_week, end_week, user, type, onsuccess, onfail) {
+        var self = this
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
+            // filter out collaborators
+            response = response.filter(function(collaborator) {
+                return user === null || collaborator.author.login.localeCompare(user)
+            })
+            // filter out weeks
+            for (var i = 0; i < response.length; i++)
+                response[i].weeks = response[i].weeks.filter(function(week) {
+                    return self._withinTime(start_week, end_week, week.w)
+                })
+            // calulate sum of contributions per week
+            var sums = {}
+            for (var i = 0; i < response.length; i++) {
+                var weeks = response[i].weeks
+                for (var j = 0; j < weeks.length; j++) {
+                    if (weeks[j].w in sums)
+                        sums[weeks[j].w] = weeks[j][type]
+                    else
+                        sums[weeks[j].w] += weeks[j][type]
+                }
+            }
+            // convert from {timestamp: total} to [Date, total]
+            var points = Object.keys(sums).map(function (timestamp) {
+                return [new Date(timestamp * 1000), sums[timestamp]]
+            })
+            onsuccess(points)
         }).fail(function() {
-            onfail();
-        });
+            onfail()
+        })
     },
     /**
      * GET /repos/:owner/:repo/stats/participation
@@ -119,56 +105,32 @@ var github = {
             onfail();
         });
     },
-    //
-    // start_week, end_week: week numbers given as a Unix timestamp https://en.wikipedia.org/wiki/Unix_time
-    // start_week: if null indicated the beginning of time
-    // end_week: if null specifies now
-    // a valid week is considered to be one which begins before the end_week and after the start_week values
-    contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
-            response = $.grep(response, function (collaborator, index) {                            //http://api.jquery.com/jQuery.grep/ returns array of desired contributors -- if return value is true, element is retained, else it is deleted.
-                if (user === null || collaborator.author.login === user) {                          //filter desired contributors
-                    response[index].weeks = $.grep(collaborator.weeks, function (week) {            //filter desired weeks from desired contributors
-                        return withinTime(start_week, end_week, week.w);
-                    });
-                }
-                else return false;
-                return true;
-            });
-            onsuccess(response);
-        }).fail(function() {
-            onfail();
-        });
-    },
-    // convert the response from `github.contributions` to [[date, total]]
-    contributionsPerWeek: function(contributors, type) {
-        var data = {}
-        for (var i in contributors) {
-            var weeks = contributors[i].weeks
-            for (var j in weeks) {
-                if (weeks[j].w in data)
-                    data[weeks[j].w] = weeks[j][type]
-                else
-                    data[weeks[j].w] += weeks[j][type]
-            }
-        }
-        var points = []
-        for (var timestamp in data)
-            points.push([new Date(timestamp * 1000), data[timestamp]])
-        return points
-    },
-    // GET /repos/:owner/:repo/issues
-    // state: 1 returns OPEN issues
-    // state: -1 returns CLOSED issues
-    // state: 0 returns all issues
-    // milestone: should be an integer corresponding to the milestone number field (second milestone has 'number' = 2 etc.)
-    // milestone: null means milestones are not filtered
-    // label: a specific label name will return the issue of that label
-    // label: null means labels are not filtered
-    issues: function (owner, repo, state, milestone, label, onsuccess, onfail) {
-        var queryString = formIssueQueryString(state, milestone, label);
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/issues" + queryString, function(response) {
-            onsuccess(response);
+    /*
+     * Return a list of a repository's issues.
+     *
+     * Args:
+     *   owner: String, owner of the repository.
+     *   repo: String, name of the repository.
+     *   milestone: String, milestone an issue must be part of.
+     *   state: String, "open", "closed" or "all"
+     *   assignee: String, username of a user an issue must be assigned to
+     *   labels: [String], array of labels that issues must be labelles as
+     *   sort: String, "created", "upadted" or "comments"
+     *   direction: String, "asc" or "desc"
+     *   max: Number, maximum amount of isses to return, null for all
+     *   onsuccess: Function, callback to call on success.
+     *   onfail: Function, callback to call on failure.
+     */
+    issues: function(owner, repo, milestone, state, assignee, labels, sort,
+                     direction, max, onsuccess, onfail) {
+        var url = "https://api.github.com/repos/" + owner + "/" + repo + "/issues"
+        url = encodeURI(url + this._paramString([
+            ["milestone", [milestone]], ["state", [state]],
+            ["assignee", [assignee]], ["labels", labels], ["sort", [sort]],
+            ["direction", [direction]]
+        ]))
+        $.get(url, function(response) {
+            onsuccess(response.slice(0, Math.min(max, response.length)));
         }).fail(function() {
             onfail();
         });
@@ -179,8 +141,53 @@ var github = {
         }).fail(function() {
             onfail();
         });
+    },
+    /* Create a URL parameter string.
+     *
+     * Args:
+     *   params: [[key, [values]]
+     *
+     * Return:
+     *   A string in the form "?keyA=valueA0?keyB=valueB0, valueB1"
+     */
+     _paramString: function(params) {
+        // remove empty values
+        for (var i = 0; i < params.length; i++)
+            params[i][1] = params[i][1].filter(function(x) {
+                return x
+            })
+        // remove parameters with no values
+        params = params.filter(function(param) {
+            return param[1].length
+        })
+        var result = "?"
+        for (var i = 0; i < params.length; i++) {
+            const key = params[i][0]
+            const values = params[i][1]
+            result += "&" + key + "="
+            for (var j = 0; j < values.length; j++) {
+                if (j != 0)
+                    result += ","
+                result += values[j]
+            }
+        }
+        return result
+    },
+    /*
+     * Is a unix timestamp within two others inclusively?
+     *
+     * Args:
+     *   start_week: Number, earlist allowed week.
+     *   end_week: Number, most recent allowed week.
+     *   input_week: Number, week to check.
+     */
+    _withinTime: function(start_week, end_week, input_week){
+        return ((start_week === null && end_week === null) ||
+                (start_week === null && input_week <= end_week ) ||
+                (start_week <= input_week && end_week === null) ||
+                (start_week <= input_week && input_week <= end_week))
     }
-};
+}
 
 // Make available to `node` for unittesting.
-module.exports = github;
+module.exports = github

@@ -11,18 +11,16 @@
             </div>
             <div>
                 <label class="ms-Label">Weekday or Week</label>
-                <select id="mode" on-change="modeChange">
+                <select id="mode">
                     <option value="weekday">Weekday</option>
                     <option value="week">Week</option>
                 </select>
             </div>
-            <template is="dom-if" if="{{showChartType}}">
-                <label class="ms-Label">Chart Type</label>
-                <select id="chartType">
-                    <option value="bar">Bar</option>
-                    <option value="line">Line</option>
-                </select>
-            </template>
+            <label class="ms-Label">Chart Type</label>
+            <select id="chartType">
+                <option value="bar">Bar</option>
+                <option value="line">Line</option>
+            </select>
             <button-pair></button-pair>
         </form>
     </template>
@@ -38,18 +36,15 @@
                 repo: {
                     type: String,
                     notify: true
-                },
-                // whether to show chart type dropdown
-                showChartType: {
-                    type: Boolean,
-                    value: false
                 }
             },
             insert: function() {
-                var url = this.$.repositoryURL.value;
-                var owner = url.split("/")[0];
-                var repo = url.split("/")[1];
+                var url = this.$.repositoryURL.value
+                var owner = url.split("/")[0]
+                var repo = url.split("/")[1]
+                var mode = this.$.mode.value
                 var chartType = this.$$("#chartType").value
+                console.log(chartType)
 
 				// Make sure the URL is filled in.
 				if (!url) {
@@ -67,10 +62,10 @@
                     return
                 }
                 // graph of commits by weekday
-				if (this.$.mode.value == "weekday") {
+				if (mode == "weekday") {
                     var self = this;
 					github.commit_activity(owner, repo, function(response) {
-						chart.weekdayCommits(repo, response, function(base64Image) {
+						chart.weekdayCommits(repo, response, chartType, function(base64Image) {
 							insertData(base64Image.replace("data:image/png;base64,",""), "image");
 						})
 					}, function() {
@@ -87,9 +82,6 @@
                         this.fire("showErrorMessage", {text: "Connection Failed."});
                     });
 				}
-            },
-            modeChange: function() {
-                this.showChartType = this.$.mode.value == "week"
             }
         });
     </script>
