@@ -19,7 +19,7 @@
             </div>
             <div>
                 <label class="ms-Label">Additions/Deletions</label>
-                <select id = "mode">
+                <select id="mode">
                     <option value="a" text="Additions">Additions</option>
                     <option value="d" text="Deletions">Deletions</option>
                     <option value="c" text="Combined">Combined</option>
@@ -30,6 +30,13 @@
                 <select id="userSelect" on-change="userSelectChange">
                     <option value="combined">All users</option>
                     <option value="singleUser">Single User</option>
+                </select>
+            </div>
+            <div>
+                <label class="ms-Label">Chart Type</label>
+                <select id="chartType">
+                    <option value="bar">Bar</option>
+                    <option value="line">Line</option>
                 </select>
             </div>
             <template is="dom-if" if="{{showUserInput}}">
@@ -71,6 +78,7 @@
                 var title = this.$.mode[this.$.mode.selectedIndex].text
                 var singleUser = this.$.userSelect.value == "singleUser"
                 var selectedUser = singleUser ? this.$$("#selectedUser").value : null
+                var chartType = this.$.chartType.value
 
 				// Make sure the fields are filled in correctly.
 				if (!url) {
@@ -91,7 +99,7 @@
                 }
 				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
 					var points = github.contributionsPerWeek(response, mode)
-					chart.contributors(title, points, function(base64Image) {
+					chart.contributors(title, points, chartType, function(base64Image) {
 						insertData(base64Image.replace("data:image/png;base64,",""), "image");
 					})
 				}, function() {
