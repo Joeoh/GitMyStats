@@ -59,24 +59,25 @@
                 }
             },
             insert: function() {
-                // (owner, repo, milestone, state, assignee, labels, sort, direction, since, onsuccess, onfail)
+                // Get all user-entered values.
                 const url = this.$.repoOwner.value
                 const owner = url.split("/")[0]
                 const repo = url.split("/")[1]
                 const milestone = this.$.milestone.value
                 const state = this.$.state.value
                 const assignee = this.$.assignee.value
-                const labels = this.$.labels.value.split(",").map(function(x) {
-                    return x.trim()
+                const labels = this.$.labels.value.split(",").map(function(label) {
+                    return label.trim()
                 })
                 const sort = this.$.sort.value
                 const direction = this.$.sortDirection.value
                 const max = parseInt(this.$.max.value)
-
+                // Error handling.
                 if (!url) {
                     this.fire("showErrorMessage", {text: "Please enter a URL."});
                     return;
                 }
+                // Insert image of graph.
 				github.issues(owner, repo, milestone, state, assignee, labels,
                               sort, direction, max, function(response) {
                     console.log(response)
@@ -84,11 +85,6 @@
                 }, function() {
                     this.fire("showErrorMessage", {text: "GitHub API request failed"})
                 })
-            },
-            // Show or hide the user input field depending on the value of the
-            // #userSelect dropdown.
-            userSelectChange: function() {
-                this.showUserInput = this.$.userSelect.value == "singleUser"
             }
         });
     </script>
