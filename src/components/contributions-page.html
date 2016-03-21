@@ -19,7 +19,7 @@
             </div>
             <div>
                 <label class="ms-Label">Additions/Deletions</label>
-                <select id = "mode">
+                <select id="mode">
                     <option value="a" text="Additions">Additions</option>
                     <option value="d" text="Deletions">Deletions</option>
                     <option value="c" text="Combined">Combined</option>
@@ -35,6 +35,13 @@
             <template is="dom-if" if="{{showUserInput}}">
                 <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
             </template>
+            <div>
+                <label class="ms-Label">Chart Type</label>
+                <select id="chartType">
+                    <option value="bar">Bar</option>
+                    <option value="line">Line</option>
+                </select>
+            </div>
             <button-pair></button-pair>
         </form>
     </template>
@@ -49,10 +56,12 @@
                 this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
             },
             properties: {
+                // the current user/repo string
                 repo: {
                     type: String,
                     notify: true
                 },
+                // whether to show input field for a single user
                 showUserInput: {
                     type: Boolean,
                     value: false
@@ -71,6 +80,7 @@
                 var title = this.$.mode[this.$.mode.selectedIndex].text
                 var singleUser = this.$.userSelect.value == "singleUser"
                 var selectedUser = singleUser ? this.$$("#selectedUser").value : null
+                var chartType = this.$.chartType.value
 
 				// Make sure the fields are filled in correctly.
 				if (!url) {
@@ -91,7 +101,7 @@
                 }
 				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
 					var points = github.contributionsPerWeek(response, mode)
-					chart.contributors(title, points, function(base64Image) {
+					chart.contributors(title, points, chartType, function(base64Image) {
 						insertData(base64Image.replace("data:image/png;base64,",""), "image");
 					})
 				}, function() {
