@@ -56,10 +56,12 @@
                 this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
             },
             properties: {
+                // the current user/repo string
                 repo: {
                     type: String,
                     notify: true
                 },
+                // whether to show input field for a single user
                 showUserInput: {
                     type: Boolean,
                     value: false

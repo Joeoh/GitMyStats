@@ -34,10 +34,12 @@
                 "button-pair-insert": "insert"
             },
             properties: {
+                // the current user/repo string
                 repo: {
                     type: String,
                     notify: true
                 },
+                // whether to show chart type dropdown
                 showChartType: {
                     type: Boolean,
                     value: false
@@ -78,7 +80,7 @@
                 // graph of commits by week
 				else {
 					github.participation(owner, repo, function(response) {
-						chart.participation(repo, response, chartType, function(base64Image) {
+						chart.weeklyCommits(repo, response, chartType, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
                         })
 					}, function() {

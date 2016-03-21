@@ -48,24 +48,25 @@ var chart = {
     this._create("line", data, {}, callback)
   },
   /*
-   * Generates a base 64 encoded image of a chart. The image is manipulated with
-   * a callback.
+   * Generate a base 64 encoded image of a chart of commits per week.
    *
    * Args:
    *   repo: String, the title of the repository.
    *   weeks: [Number], commits per week with index 0 the most recent week.
    *   type: String, the type of chart to create.
-   *   callback: Function, function that takes the image as first argument.
+   *   callback: Function, callback that takes the image as first argument.
    */
-  participation: function(repo, weeks, type, callback) {
+  weeklyCommits: function(repo, weeks, type, callback) {
     // create an array of [[label, value]]
     var date = new Date()
     date.setDate(date.getDate() - 365)
     var data = []
-    for (var i in weeks) {
+    for (var i = 0; i < weeks.length; i++) {
       data.push([date.getDate() + "/" + (date.getFullYear() + "").substring(2, 4), weeks[i]])
       date.setDate(date.getDate() + 7)
     }
+    // trim blank weeks from array ends
+    data = data.trimEnds(function(x) { return !x[1] })
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)
     data.datasets[0].label = "Weekly commits to: " + repo
@@ -84,20 +85,32 @@ var chart = {
     }
     this._create("pie", data, options, callback)
   },
-  // Create a chart and call the callback with the chart as a base 64 image.
+  /*
+   * Create a base 64 image of a chart.
+   *
+   * Args:
+   *   type: String, the type of chart.
+   *   data: Object, the data to pass to Chart.js.
+   *   options: Object, the options object to pass to Chart.js
+   *   callback: Function, callback that takes the image as first argument.
+   */
   _create: function(type, data, options, callback) {
     var newChart
     Chart.defaults.global.animation.onComplete = function() {
       callback(newChart.toBase64Image())
     }
-    var hiddenCanvas = this._hiddenCanvas()
-    newChart = new Chart(hiddenCanvas.getContext("2d"), {
+    newChart = new Chart(this._hiddenCanvas().getContext("2d"), {
       type: type,
       data: data,
       options: options
     })
   },
-  // Create and return a (hidden) canvas element for Chart.js.
+  /*
+   * Return a (hidden) canvas element for Chart.js.
+   *
+   * If the document doesn't contain the element then it is first created with
+   * display = "none" and appended to the document.
+   */
   _hiddenCanvas: function() {
     if (!document.getElementById(HIDDEN_CANVAS_ID)) {
       var canvas = document.createElement("canvas")
