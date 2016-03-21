@@ -1,5 +1,5 @@
-function betterType(obj){
-    return Object.prototype.toString.call(obj).slice(8, -1);
+Object.prototype.betterType = function(){
+    return Object.prototype.toString.call(this).slice(8, -1);
 }
 
 Array.prototype.trimEnds = function(f) {
