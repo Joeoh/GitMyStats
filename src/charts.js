@@ -95,6 +95,40 @@ var chart = {
     }
     this._create("pie", data, options, callback)
   },
+  punch_card: function(points, callback) {
+    // determine max and min size of punchcard points
+    var minContributions = 0
+    var maxContributions = 0
+    console.log("points.length: " + points.length)
+    for (var i = 0; i < points.length; i++) {
+      minContributions = Math.min(minContributions, points[i][2])
+      maxContributions = Math.max(maxContributions, points[i][2])
+    }
+    console.log("minContributions" + minContributions)
+    console.log("maxContributions" + maxContributions)
+    var data = {
+      labels: [].null(24).map(function(_, i) { return "" + i }),
+      datasets: [].null(168).map(function() { // 24 * 7 data sets
+        return {
+          data: [].null(24).map(function() { return null }) // 24 nulls
+        }
+      })
+    }
+    console.log(data)
+    for (var i = 0; i < points.length; i++) {
+      const y = points[i][0]
+      const x = points[i][1]
+      const commits = points[i][2]
+      console.log(commits !== 0)
+      if (commits !== 0)
+        data.datasets[i].data[x] = y
+      data.datasets[i].pointBorderWidth = (commits - minContributions) / (maxContributions - minContributions) * 40
+      data.datasets[i].backgroundColor = "#88D3A1"
+      data.datasets[i].fill = false
+    }
+    console.log(data)
+    this._create("line", data, { legend: { display: false } }, callback)
+  },
   /*
    * Create a base 64 image of a chart.
    *
