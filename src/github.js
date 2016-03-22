@@ -60,7 +60,7 @@ var github = {
             // filter out weeks
             for (var i = 0; i < response.length; i++)
                 response[i].weeks = response[i].weeks.filter(function(week) {
-                    return self._withinTime(start_week, end_week, week.w)
+                    return start_week <= week.w && week.w <= end_week
                 })
             // calulate sum of contributions per week
             var sums = {}
@@ -171,20 +171,6 @@ var github = {
             }
         }
         return result
-    },
-    /*
-     * Is a unix timestamp within two others inclusively?
-     *
-     * Args:
-     *   start_week: Number, earlist allowed week.
-     *   end_week: Number, most recent allowed week.
-     *   input_week: Number, week to check.
-     */
-    _withinTime: function(start_week, end_week, input_week){
-        return ((start_week === null && end_week === null) ||
-                (start_week === null && input_week <= end_week ) ||
-                (start_week <= input_week && end_week === null) ||
-                (start_week <= input_week && input_week <= end_week))
     }
 }
 
