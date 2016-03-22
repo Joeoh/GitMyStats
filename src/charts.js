@@ -70,7 +70,9 @@ var chart = {
     date.setDate(date.getDate() - 365)
     var data = []
     for (var i = 0; i < weeks.length; i++) {
-      data.push([date.getDate() + "/" + (date.getFullYear() + "").substring(2, 4), weeks[i]])
+      var dateString = date.getDate() + "/" + date.getMonth() + "/" +
+                       (date.getFullYear() + "").substring(2, 4)
+      data.push([dateString, weeks[i]])
       date.setDate(date.getDate() + 7)
     }
     // trim blank weeks from array ends
