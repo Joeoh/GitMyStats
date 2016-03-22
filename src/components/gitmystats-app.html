@@ -41,6 +41,9 @@
     <script>
         Polymer({
             is: "gitmystats-app",
+            ready: function() {
+                this.toPunchcard()
+            },
             properties: {
                 // The amount of time to display an error message for.
                 errorMessageTime: {
@@ -53,7 +56,7 @@
                 },
                 repo: {
                     type: String,
-                    value: "torvalds/linux"
+                    value: "joeoh/gitmystats"
                 },
                 // The index of the page currently being displayed.
                 selectedPage: {
