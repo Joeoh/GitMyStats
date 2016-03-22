@@ -78,7 +78,10 @@ gulp.task('serve', ['build'], () => {
         port: 8443,
         server: {
             baseDir: path.debug,
-            routes: { '/bower_components': 'bower_components' }
+            routes: {
+                '/bower_components': 'bower_components',
+                '/chartjs2beta2': 'chartjs2beta2'
+            }
         }
     });
 
