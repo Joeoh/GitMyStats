@@ -35,6 +35,69 @@ var github = {
         })
     },
     /*
+     * Convert the response from `contributors` to an array of [String, Number],
+     * where String is a username and Number is the amount of contributions of
+     * of given type by that user.
+     *
+     * Args:
+     *   contributions: [Object], a subset of the response received from GitHub
+     *   type: String, "a", "d", or "c" for additions, deletions or combined.
+     *
+     * Return:
+     *   See main description.
+     */
+    contributionsPerUser: function(contributions, type) {
+        // calulate sum of contributions per week
+        var sums = {} // {username: total}
+        // for each user
+        for (var i = 0; i < contributions.length; i++) {
+            var username = contributions[i].author.login
+            if (!(username in sums))
+                sums[username] = 0
+            var weeks = contributions[i].weeks
+            // for each week
+            for (var j = 0; j < weeks.length; j++)
+                sums[username] += weeks[j][type]
+        }
+        // // convert from {username: total} to [username, total]
+        return Object.keys(sums).map(function (username) {
+            return [username, sums[username]]
+        })
+    },
+    /*
+     * Convert the response from `contributors` to an array of [Date, Number],
+     * where Date represents the week and Number is the amount of contributions
+     * of given type for that week.
+     *
+     * Args:
+     *   contributions: [Object], a subset of the response received from GitHub
+     *   type: String, "a", "d", or "c" for additions, deletions or combined.
+     *
+     * Return:
+     *   See main description.
+     */
+    contributionsPerWeek: function(contributions, type) {
+        // calulate sum of contributions per user
+        var sums = {} // {week: total}
+        // for each user
+        for (var i = 0; i < contributions.length; i++) {
+            var weeks = contributions[i].weeks
+            // for each week
+            for (var j = 0; j < weeks.length; j++) {
+                var timestamp = weeks[j].w
+                var amount = weeks[j][type]
+                if (timestamp in sums)
+                    sums[timestamp] += amount
+                else
+                    sums[timestamp] = amount
+            }
+        }
+        // convert from {week: total} to [Date, total]
+        return Object.keys(sums).map(function (timestamp) {
+            return [new Date(timestamp * 1000), sums[timestamp]]
+        })
+    },
+    /*
      * Return contributions per week for a repoistory.
      *
      * Args:
@@ -43,41 +106,26 @@ var github = {
      *   start_week: Number, earlist allowed week.
      *   end_week: Number, most recent allowed week.
      *   user: null|String, null to indicate all users else a specific user.
-     *   type: String, "a", "d", or "c" for additions, deletions or combined.
      *   onsuccess: Function, callback to call on success.
      *   onfail: Function, callback to call on failure.
      *
      * Return:
      *   [[Date, Number]], an array of contributions per week.
      */
-    contributors: function (owner, repo, start_week, end_week, user, type, onsuccess, onfail) {
+    contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
         var self = this
         $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
             // filter out collaborators
-            response = response.filter(function(collaborator) {
-                return user === null || collaborator.author.login.localeCompare(user)
-            })
+            if (user !== null)
+                response = response.filter(function(collaborator) {
+                    return collaborator.author.login.localeCompare(user) === 0
+                })
             // filter out weeks
             for (var i = 0; i < response.length; i++)
                 response[i].weeks = response[i].weeks.filter(function(week) {
                     return start_week <= week.w && week.w <= end_week
                 })
-            // calulate sum of contributions per week
-            var sums = {}
-            for (var i = 0; i < response.length; i++) {
-                var weeks = response[i].weeks
-                for (var j = 0; j < weeks.length; j++) {
-                    if (weeks[j].w in sums)
-                        sums[weeks[j].w] = weeks[j][type]
-                    else
-                        sums[weeks[j].w] += weeks[j][type]
-                }
-            }
-            // convert from {timestamp: total} to [Date, total]
-            var points = Object.keys(sums).map(function (timestamp) {
-                return [new Date(timestamp * 1000), sums[timestamp]]
-            })
-            onsuccess(points)
+            onsuccess(response)
         }).fail(function() {
             onfail()
         })
