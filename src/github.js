@@ -160,10 +160,13 @@ var github = {
             return param[1].length
         })
         var result = "?"
+        // for each key
         for (var i = 0; i < params.length; i++) {
             const key = params[i][0]
             const values = params[i][1]
+            // append "&key=""
             result += "&" + key + "="
+            // append "value0, value1, value2" ...
             for (var j = 0; j < values.length; j++) {
                 if (j != 0)
                     result += ","
