@@ -96,6 +96,67 @@ var chart = {
     this._create("pie", data, options, callback)
   },
   /*
+   * Generate a base 64 encoded image of a chart representing a punchcard.
+   *
+   * Args:
+   *   points: Array, the response returned from `github.punch_card`
+   *   callback: Function, callback that takes the image as first argument.
+   */
+  punch_card: function(points, callback) {
+    const minPointSize = 1
+    const maxPointSize = 40
+    // determine max and min size of punchcard points
+    var minContributions = 0
+    var maxContributions = 0
+    for (var i = 0; i < points.length; i++) {
+      minContributions = Math.min(minContributions, points[i][2])
+      maxContributions = Math.max(maxContributions, points[i][2])
+    }
+    // set up data object for Chart.js
+    var data = {
+      // x-axis labels are 12am, 1am, ... 11pm
+      labels: [].null(24).map(function(_, i) {
+        const value = i % 12 === 0 ? 12 : i % 12
+        if (i <= 11) return value + "am"
+        else         return value + "pm"
+      }),
+      // need a dataset for every 24 * 7 possible point
+      datasets: [].null(168).map(function() {
+        return {
+          // each dataset be of length 24 (length of x-axis)
+          data: [].null(24).map(function() { return null })
+        }
+      })
+    }
+    // insert each point to the dataset unless it's value is 0
+    for (var i = 0; i < points.length; i++) {
+      const commits = points[i][2]
+      if (commits !== 0)
+        data.datasets[i].data[points[i][1]] = points[i][0]
+      // p is a value in [0 1]
+      const p = (commits - minContributions) / (maxContributions - minContributions)
+      data.datasets[i].pointBorderWidth = p * (maxPointSize - minPointSize) + minPointSize
+      data.datasets[i].fill = false
+    }
+    var options = {
+      legend: { display: false },
+      scales: {
+        yAxes: [{
+          ticks: {
+            // set min and max to ensure y-axis has all 7 values
+            min: 0,
+            max: 6,
+            // convert y-axis value to day string
+            callback: function(value) {
+              return ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"][value]
+            }
+          }
+        }]
+      }
+    }
+    this._create("line", data, options, callback)
+  },
+  /*
    * Create a base 64 image of a chart.
    *
    * Args:
