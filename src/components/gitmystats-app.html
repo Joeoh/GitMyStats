@@ -9,25 +9,36 @@
         <iron-pages id="ironPages" attr-for-selected="name" selected="{{selectedPage}}">
             <landing-page name="landingPage">
                 <label class="ms-fontWeight-semibold">Choose a Graph Type</label>
-                <button on-click="toCommits" class="ms-Button host-button homeButton">
-                    <span class="ms-Button-label">Commits</span>
-                </button>
-                <button on-click="toContributions" class="ms-Button host-button homeButton">
-                    <span class="ms-Button-label">Contributions</span>
-                </button>
-                <button on-click="toPunchcard" class="ms-Button host-button homeButton">
-                    <span class="ms-Button-label">Punchcard</span>
-                </button>
-                <button on-click="toIssues" class="ms-Button host-button homeButton">
-                    <span class="ms-Button-label">Issues</span>
-                </button>
-                <button on-click="toUser" class="ms-Button host-button homeButton">
-                    <span class="ms-Button-label">User Profile</span>
-                </button>
-                <button on-click="toHelp"
-                        class="ms-Button host-button homeButton lrg-margin-top">
-                <span class="ms-Button-label">Help</span>
-                </button>
+                <div>
+                    <button on-click="toCommits" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Commits</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toContributions" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Contributions</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toPunchcard" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Punchcard</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toIssues" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">Issues</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toUser" class="ms-Button host-button homeButton">
+                        <span class="ms-Button-label">User Profile</span>
+                    </button>
+                </div>
+                <div>
+                    <button on-click="toHelp" class="ms-Button host-button homeButton lrg-margin-top">
+                        <span class="ms-Button-label">Help</span>
+                    </button>
+                </div>
             </landing-page>
             <commits-page name="commitsPage" repo="{{repo}}"></commits-page>
             <contributions-page name="contributionsPage" repo="{{repo}}"></contributions-page>
