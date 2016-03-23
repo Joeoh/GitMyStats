@@ -4,44 +4,55 @@
 
     <template>
         <form>
+            <!-- title -->
             <label class="ms-fontWeight-semibold">Contributions</label>
+            <!-- repo and owner -->
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
-                <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
+                <input id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
+            <!-- start date -->
             <div class="ms-TextField">
                 <label class="ms-Label">Start Date</label>
-                <input  id="startDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+                <input id="startDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
             </div>
+            <!-- end date -->
             <div class="ms-TextField">
                 <label class="ms-Label">End Date</label>
-                <input  id="endDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+                <input id="endDate" type = "date" placeholder="DD/MM/YYYY" class="ms-TextField-field">
             </div>
-            <div>
-                <label class="ms-Label">Additions/Deletions</label>
-                <select id="mode">
-                    <option value="a" text="Additions">Additions</option>
-                    <option value="d" text="Deletions">Deletions</option>
-                    <option value="c" text="Combined">Combined</option>
-                </select>
-            </div>
-            <div>
-                <label class="ms-Label">Users</label>
-                <select id="userSelect" on-change="userSelectChange">
-                    <option value="combined">All users</option>
-                    <option value="singleUser">Single User</option>
-                </select>
-            </div>
-            <template is="dom-if" if="{{showUserInput}}">
-                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field">
+            <!-- additions/deletions -->
+            <label class="ms-Label">Additions/Deletions</label>
+            <select id="mode">
+                <option value="c" text="Additions &amp; Deletions">Both</option>
+                <option value="a" text="Additions">Additions</option>
+                <option value="d" text="Deletions">Deletions</option>
+            </select>
+            <!-- all users or single user -->
+            <label class="ms-Label">Users</label>
+            <select id="userSelect" on-change="userSelectChange">
+                <option value="combined">All users</option>
+                <option value="singleUser">Single User</option>
+            </select>
+            <!-- single user input -->
+            <template is="dom-if" if="{{singleUser}}">
+                <input id="selectedUser" placeholder="joeoh" class="ms-TextField-field sml-margin-top">
             </template>
-            <div>
-                <label class="ms-Label">Chart Type</label>
+            <!-- chart type -->
+            <label class="ms-Label">Chart Type</label>
+            <template is="dom-if" if="{{singleUser}}">
                 <select id="chartType">
                     <option value="bar">Bar</option>
                     <option value="line">Line</option>
                 </select>
-            </div>
+            </template>
+            <template is="dom-if" if="{{!singleUser}}">
+                <select id="chartTypePie">
+                    <option value="pie">Pie</option>
+                    <option value="bar">Bar</option>
+                    <option value="line">Line</option>
+                </select>
+            </template>
             <button-pair></button-pair>
         </form>
     </template>
@@ -61,8 +72,8 @@
                     type: String,
                     notify: true
                 },
-                // whether to show input field for a single user
-                showUserInput: {
+                // only get data for single user?
+                singleUser: {
                     type: Boolean,
                     value: false
                 }
@@ -71,16 +82,16 @@
                 "button-pair-insert": "insert"
             },
             insert: function() {
-                var url = this.$.repositoryURL.value
-                var owner = url.split("/")[0]
-                var repo = url.split("/")[1]
-                var unixStartDate = new Date(this.$.startDate.value).getTime() / 1000
-                var unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
-                var mode = this.$.mode.value
-                var title = this.$.mode[this.$.mode.selectedIndex].text
-                var singleUser = this.$.userSelect.value == "singleUser"
-                var selectedUser = singleUser ? this.$$("#selectedUser").value : null
-                var chartType = this.$.chartType.value
+                const url = this.$.repositoryURL.value
+                const owner = url.split("/")[0]
+                const repo = url.split("/")[1]
+                const unixStartDate = new Date(this.$.startDate.value).getTime() / 1000
+                const unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
+                const mode = this.$.mode.value
+                const title = this.$.mode[this.$.mode.selectedIndex].text
+                const singleUser = this.$.userSelect.value === "singleUser"
+                const selectedUser = singleUser ? this.$$("#selectedUser").value : null
+                const chartType = singleUser ? this.$$("#chartType").value : this.$$("#chartTypePie").value
 
 				// Make sure the fields are filled in correctly.
 				if (!url) {
@@ -100,18 +111,26 @@
                     return;
                 }
 				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
-                    response = github.contributionsPerWeek(response, mode)
-                    chart.contributors(title, response, chartType, function(base64Image) {
-                        insertData(base64Image.replace("data:image/png;base64,", ""), "image");
-                    })
+                    if (chartType === "pie") {
+                        response = github.contributionsPerUser(response, mode)
+                        chart.pie(response, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,", ""), "image")
+                        })
+                    }
+                    else {
+                        response = github.contributionsPerWeek(response, mode)
+                        chart.contributors(title, response, chartType, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,", ""), "image")
+                        })
+                    }
 				}, function() {
                     this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
-                });
+                })
             },
             // Show or hide the user input field depending on the value of the
             // #userSelect dropdown.
             userSelectChange: function() {
-                this.showUserInput = this.$.userSelect.value == "singleUser"
+                this.singleUser = this.$.userSelect.value === "singleUser"
             }
         });
     </script>
