@@ -99,11 +99,11 @@
                     return;
                 }
                 if (!unixStartDate) {
-                    this.fire("showErrorMessage", {text: "Invalid Start Date.<br>Please enter another date."});
+                    this.fire("showErrorMessage", {text: "Invalid Start Date."});
                     return;
                 }
                 if (!unixEndDate) {
-                    this.fire("showErrorMessage", {text: "Invalid End Date.<br>Please enter another date"});
+                    this.fire("showErrorMessage", {text: "Invalid End Date."});
                     return;
                 }
                 if (singleUser && !selectedUser) {
@@ -124,7 +124,7 @@
                         })
                     }
 				}, function() {
-                    this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
+                    this.fire("showErrorMessage", {text: "Connection Failed."})
                 })
             },
             // Show or hide the user input field depending on the value of the
