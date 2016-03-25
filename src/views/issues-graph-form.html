@@ -1,42 +1,101 @@
-<form id="form">
-    <label class="ms-Label">Issues graph</label>
-    <div class="ms-TextField">
-        <label class="ms-Label">Repository URL</label>
-        <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
-    </div>
-    <div class="ms-TextField">
-        <label class="ms-Label">Start Date</label>
-        <input  id="startDate" placeholder="DD/MM/YYYY" class="ms-TextField-field">
-    </div>
-    <div class="ms-TextField">
-        <label class="ms-Label">End Date</label>
-        <input  id="endDate" placeholder="DD/MM/YYYY" class="ms-TextField-field">
-    </div>
-    <div>
-        <label class="ms-Label">Opened/Closed</label>
-        <select name="contributionType">
-            <option value="combined">Combined</option>
-            <option value="additions">Opened</option>
-            <option value="deletions">Closed</option>
-        </select>
-    </div>
-    <div>
-        <label class="ms-Label">Users</label>
-        <select name="userSelect">
-            <option value="combined">All users</option>
-            <option value="singleUser">Single User</option>
-        </select>
-    </div>
-    <div>
-        <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
-    </div>
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 
-    <div>
-        <smallButton id="issuesCancel" class="ms-Button host-button">
-            <span class="ms-Button-label">Cancel</span>
-        </smallButton>
-        <smallButton id="issuesInsert" class="ms-Button host-button">
-            <span class="ms-Button-label">Insert</span>
-        </smallButton>
-    </div>
-</form>
+<dom-module id="issues-page">
+
+    <template>
+
+    <form id="form">
+        <label class="ms-Label">Issues graph</label>
+        <div class="ms-TextField">
+            <label class="ms-Label">Repository URL</label>
+            <input  id="repositoryURL" placeholder="joeoh/GitMyStats" value="{{repo::input}}" class="ms-TextField-field">
+        </div>
+        <div class="ms-TextField">
+            <label class="ms-Label">Start Date</label>
+            <input  id="startDate" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+        </div>
+        <div class="ms-TextField">
+            <label class="ms-Label">End Date</label>
+            <input  id="endDate" placeholder="DD/MM/YYYY" class="ms-TextField-field">
+        </div>
+        <div>
+            <label class="ms-Label">Opened/Closed</label>
+            <select name="contributionType">
+                <option value="combined">Combined</option>
+                <option value="additions">Opened</option>
+                <option value="deletions">Closed</option>
+            </select>
+        </div>
+        <div>
+            <label class="ms-Label">Users</label>
+            <select name="userSelect">
+                <option value="combined">All users</option>
+                <option value="singleUser">Single User</option>
+            </select>
+        </div>
+        <div>
+            <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
+        </div>
+
+        <div>
+            <button-pair></button-pair>
+        </div>
+    </form>
+    </template>
+
+    <script>
+        Polymer({
+            is: "issues-page",
+            listeners: {
+                "button-pair-insert": "insert"
+            },
+            properties: {
+                repo: {
+                    type: String,
+                    notify: true
+                }
+            },
+            insert: function() {
+                var url = this.$.repositoryURL.value;
+                var owner = url.split("/")[0];
+                var repo = url.split("/")[1];
+
+                // Make sure the URL is filled in.
+                if (!url) {
+                    this.fire("showErrorMessage", {text: "Please enter URL."})
+                    return
+                }
+                // Check for valid owner.
+                if (!owner) {
+                    this.fire("showErrorMessage", {text: "Invalid owner."})
+                    return
+                }
+                // Check for valid repo.
+                if (!repo) {
+                    this.fire("showErrorMessage", {text: "Invalid repo."})
+                    return
+                }
+                if (this.$.mode.value == "weekday") {
+                    var self = this;
+                    github.commit_activity(owner, repo, function(response) {
+                        chart.weekdayCommits(repo, response, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
+                    }, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection"})
+                    });
+                }
+                else {
+                    github.participation(owner, repo, function(response) {
+                        chart.participation(repo, response, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
+                    }, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed."});
+                    });
+                }
+            }
+        });
+    </script>
+
+</dom-module>
