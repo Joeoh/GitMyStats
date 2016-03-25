@@ -42,6 +42,12 @@
     <script>
         Polymer({
             is: "issues-page",
+            // Set default values for date inputs.
+            ready: function() {
+                var now = new Date()
+                this.$.endDate.valueAsDate = now
+                this.$.startDate.valueAsDate = new Date().setFullYear(now.getFullYear() - 1)
+            },
             listeners: {
                 "button-pair-insert": "insert"
             },
