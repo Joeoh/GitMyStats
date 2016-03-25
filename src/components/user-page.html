@@ -34,7 +34,36 @@
 					this.fire("showErrorMessage", {text: "No user given.<br>Please enter a username"})
                     return;
                 }
-				console.log("time to insert a graph");
+
+                github.user(selectedUser, function(response) {
+                    var responseLogin = response.login;
+                    var avatar_url = response.avatar_url;
+                    var responseName = response.name;
+                    var public_repos = response.public_repos;
+                    var created_at = response.created_at;
+                    /*
+                    console.log(responseLogin);
+                    console.log(responseName);
+                    console.log(public_repos);
+                    console.log(created_at);
+                    */
+                    var stringToInsert = "Account name : " + responseLogin + "\n" +
+                            "Name : " + responseName + "\n" +
+                            "Number of Public Repos: " + public_repos + "\n" +
+                            "Account created : " + created_at + "\n";
+                    /*
+                    insertData("Account name : " + responseLogin, "text");
+                    insertData("Name : " + responseName, "text");
+                    insertData(public_repos, "text");
+                    insertData(created_at, "text");
+                    */
+                    insertData(stringToInsert, "text");
+
+                }, function() {
+                    this.fire("showErrorMessage", {text: "Connection Failed."});
+                });
+				console.log("tried to insert user data");
+
             }
         });
     </script>
