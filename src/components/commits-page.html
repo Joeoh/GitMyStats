@@ -1,5 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<style type="text/css">
+    #weeks{display:none;}
+    #days{display:none;}
+</style>
+
 <dom-module id="commits-page">
 
     <template>
@@ -11,16 +16,26 @@
             </div>
             <div>
                 <label class="ms-Label">Weekday or Week</label>
-                <select id="mode">
+                <select id="mode" required onchange="weekOrWeekday()">
+                    <option value="">Choose graph.</option>
                     <option value="weekday">Weekday</option>
                     <option value="week">Week</option>
                 </select>
+            </div>
+            <div id="weeks">
+            <label class="ms-Label">How many weeks?</label>
+                 <input id="howManyWeeks" min="1" max="52" type="number" placeholder="eg: 10" class="ms-TextField-field">
+            </div>
+            <div id="days">
+                 <label class="ms-Label">View the last 7 days of commits.</label>
             </div>
             <label class="ms-Label">Chart Type</label>
             <select id="chartType">
                 <option value="bar">Bar</option>
                 <option value="line">Line</option>
             </select>
+            <p id="mistake"></p>
+            </div>
             <button-pair></button-pair>
         </form>
     </template>
@@ -62,6 +77,7 @@
                 }
                 // graph of commits by weekday
 				if (mode == "weekday") {
+
                     var self = this;
 					github.commit_activity(owner, repo, function(response) {
 						chart.weekdayCommits(repo, response, chartType, function(base64Image) {
@@ -72,7 +88,7 @@
                     });
 				}
                 // graph of commits by week
-				else {
+				else if (mode == "week"){
 					github.participation(owner, repo, function(response) {
 						chart.weeklyCommits(repo, response, chartType, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
@@ -81,8 +97,23 @@
                         this.fire("showErrorMessage", {text: "Connection Failed."});
                     });
 				}
+                else {
+                    document.getElementById("mistake").innerHTML="You have not selected a graph type";
+                }
             }
         });
+        function weekOrWeekday(){
+            if (document.getElementById("mode").value=="weekday")
+            {
+                document.getElementById("days").style.display="block";
+                document.getElementById("weeks").style.display="none";
+            }
+            else if (document.getElementById("mode").value=="week")
+            {
+                document.getElementById("days").style.display="none";
+                document.getElementById("weeks").style.display="block";
+            }
+        }
     </script>
 
 </dom-module>

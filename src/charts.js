@@ -67,7 +67,7 @@ var chart = {
   weeklyCommits: function(repo, weeks, type, callback) {
     // create an array of [[label, value]]
     var date = new Date()
-    date.setDate(date.getDate() - 365)
+    date.setDate(date.getDate() - 365)  //sets default to 1 year ago. as 365 days ago
     var data = []
     for (var i = 0; i < weeks.length; i++) {
       var dateString = date.getDate() + "/" + date.getMonth() + "/" +
