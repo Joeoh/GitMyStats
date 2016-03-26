@@ -70,7 +70,7 @@ var chart = {
     date.setDate(date.getDate() - 365)  //sets default to 1 year ago. as 365 days ago
     var data = []
     for (var i = 0; i < weeks.length; i++) {
-      var dateString = date.getDate() + "/" + date.getMonth() + "/" +
+      var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" +
                        (date.getFullYear() + "").substring(2, 4)
       data.push([dateString, weeks[i]])
       date.setDate(date.getDate() + 7)
