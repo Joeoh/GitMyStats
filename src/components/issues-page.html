@@ -4,7 +4,7 @@
 
     <template>
         <form id="form">
-            <label class="ms-fontWeight-semibold">Issues graph</label>
+            <label class="ms-fontWeight-semibold">Issues</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
                 <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
@@ -20,8 +20,7 @@
             <div>
                 <label class="ms-Label">Opened/Closed</label>
                 <select id = "mode" name="contributionType">
-                    <option value="combined">Combined</option>
-                    <option value="opened">Opened</option>
+                    <option value="open">Open</option>
                     <option value="closed">Closed</option>
                 </select>
             </div>
@@ -52,7 +51,18 @@
                 "button-pair-insert": "insert"
             },
             insert: function() {
+
                 var url = this.$.repositoryURL.value
+                var owner = url.split("/")[0]
+                var repo = url.split("/")[1]
+                var unixStartDate = new Date(this.$.startDate.value).getTime() / 1000
+                var unixEndDate = new Date(this.$.endDate.value).getTime() / 1000
+                var mode = this.$.mode.value
+                var title = this.$.mode[this.$.mode.selectedIndex].text
+                var singleUser = this.$.userSelect.value == "singleUser"
+                var selectedUser = singleUser ? this.$$("#selectedUser").value : null
+                var url = this.$.repositoryURL.value
+
                 console.log("!url: " + !url)
                 console.log(url)
                 var startDate = this.$.startDate.value
@@ -86,6 +96,45 @@
                     return;
                 }
 				console.log("time to isnert a graph")
+
+                //mode is whether combined/opened/closed
+                var state = 0;
+                if(mode == "closed")
+                    state = -1;
+                else if(mode == "open")
+                    state = 1;
+                console.log("State = " + state)
+                var insertString = "";
+                github.issues(owner, repo, state, null, null, function(response) {
+                    for (var key in response) {
+                        if (response.hasOwnProperty(key)) {
+                            //console.log(key, response[key]);
+                            insertString += "Title : " + response[key].title + "\n";
+                            insertString += "Description : " + response[key].body + "\n";
+                            insertString += "Created at : " + response[key].created_at + "\n";
+                            insertString += "Created by : " + response[key].user.login + "\n";
+                            if(response[key].assignee != null)
+                                insertString += "Assigned to : " + response[key].assignee.login + "\n";
+                            insertString += " \n \n";
+                        }
+                    }
+                    insertData(insertString, "text");
+                    //console.log(insertString);
+                }, function() {
+                    this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
+                })
+
+                        //I've been using the following code as an example to work from, not actually used here! :)
+                /*
+                github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
+                    var points = github.contributionsPerWeek(response, mode)
+                    chart.contributors(title, points, function(base64Image) {
+                        insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                    })
+                }, function() {
+                    this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
+                });
+                */
             }
         });
     </script>
