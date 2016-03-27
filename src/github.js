@@ -16,23 +16,48 @@
     });
 */
 
+const MAX_RETRIES = 1;
+function emptyResponse(){
+    this.name= "Empty Response";
+    this.message= "Retrying";
+    this.toString= this.name + ":\t" + this.message;
+}
+
 var github = {
     /**
      * GET /repos/:owner/:repo/stats/commit_activity
      * @return {Array} Commits per day of the week for the last year, starting on Sunday.
      */
-    commit_activity: function(owner, repo, onsuccess, onfail) {
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function(response) {
-            var days = [0, 0, 0, 0, 0, 0, 0]
-            for (var i = 0; i < response.length; i++) {
-                for (var j = 0; j < 7; j++) {
-                    days[j] += response[i].days[j]
+    commit_activity: function (owner, repo, onsuccess, onfail) {
+        var tryCount = 0;
+
+        var main = function () {
+            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function (response) {
+                //check for empty response
+                try{
+                    if ($.isEmptyObject(response) && tryCount < MAX_RETRIES) {
+                        tryCount++;
+                        throw emptyResponse;
+                    }
+                    var days = [0, 0, 0, 0, 0, 0, 0]
+                    for (var i = 0; i < response.length; i++) {
+                        for (var j = 0; j < 7; j++) {
+                            days[j] += response[i].days[j]
+                        }
+                    }
+                    onsuccess(days);
                 }
-            }
-            onsuccess(days)
-        }).fail(function() {
-            onfail()
-        })
+                catch (e) {
+                    if (e instanceof emptyResponse) {
+                        console.log(e.toString);
+                        main();
+                    }
+                }
+            }).fail(function (err) {
+                    onfail()
+            })
+        }
+        main();
     },
     /*
      * Convert the response from `contributors` to an array of [String, Number],
@@ -113,44 +138,100 @@ var github = {
      *   [[Date, Number]], an array of contributions per week.
      */
     contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
+        var tryCount = 0;
         var self = this
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
-            // filter out collaborators
-            if (user !== null)
-                response = response.filter(function(collaborator) {
-                    return collaborator.author.login.localeCompare(user) === 0
-                })
-            // filter out weeks
-            for (var i = 0; i < response.length; i++)
-                response[i].weeks = response[i].weeks.filter(function(week) {
-                    return start_week <= week.w && week.w <= end_week
-                })
-            onsuccess(response)
-        }).fail(function() {
-            onfail()
-        })
+        var main = function () {
+            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
+                try{
+                    //check for empty response
+                    if ($.isEmptyObject(response) && tryCount < MAX_RETRIES) {
+                        tryCount++;
+                        throw new emptyResponse();
+                    }
+                //filter out collaborators
+                if (user !== null)
+                    response = response.filter(function (collaborator) {
+                        return collaborator.author.login.localeCompare(user) === 0
+                    })
+                //filter out weeks
+                for (var i = 0; i < response.length; i++)
+                    response[i].weeks = response[i].weeks.filter(function (week) {
+                        return start_week <= week.w && week.w <= end_week
+                    })
+                onsuccess(response);
+                }
+                catch (e) {
+                    //retry if emptyResponse caught
+                    if (e instanceof emptyResponse) {
+                        console.error(e.toString);
+                        main();
+                    }
+                }
+            }).fail(function () {
+                onfail();
+            })
+        }
+
+        main();
     },
     /**
      * GET /repos/:owner/:repo/stats/participation
      * @return {Array} Commits per week for the last year, oldest week first.
      */
-    participation: function(owner, repo, onsuccess, onfail) {
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/participation", function(response) {
-            onsuccess(response.all);
-        }).fail(function() {
-            onfail();
-        });
+    participation: function (owner, repo, onsuccess, onfail) {
+        var tryCount = 0;
+        var main = function () {
+            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/participation", function (response) {
+                //check for empty response
+                try{
+                    if ($.isEmptyObject(response) && tryCount < MAX_RETRIES) {
+                        tryCount++;
+                        throw new emptyResponse();
+                    }
+                    onsuccess(response.all);
+                }
+                catch (e) {
+                    //retry if emptyResponse caught
+                    if (e instanceof emptyResponse) {
+                        console.log(e.toString);
+                        main();
+                    }
+                }
+            }).fail(function () {
+                    onfail();
+            });
+        }
+        main();
     },
     /**
      * GET /users/:username
      * @return {Object} An object representing a GitHub user, with fields such as email and blog.
      */
-    user: function(username, onsuccess, onfail) {
-        $.get("https://api.github.com/users/" + username, function(response) {
-            onsuccess(response);
-        }).fail(function() {
-            onfail();
-        });
+    user: function (username, onsuccess, onfail) {
+        var tryCount = 0;
+
+        var main = function () {
+            $.get("https://api.github.com/users/" + username, function (response) {
+                //check for empty response
+                try{
+                    if ($.isEmptyObject(response) && tryCount < MAX_RETRIES) {
+                        tryCount++;
+                        throw emptyResponse;
+                    }
+                    onsuccess(response);
+                }
+                catch (e) {
+                    //retry if emptyResponse
+                    if (e instanceof emptyResponse) {
+                        console.log(e.toString);
+                        main();
+                    }
+                }
+            }).fail(function () {
+                    onfail();
+            });
+        }
+        main();
     },
     /*
      * Return a list of a repository's issues.
@@ -170,24 +251,60 @@ var github = {
      */
     issues: function(owner, repo, milestone, state, assignee, labels, sort,
                      direction, max, onsuccess, onfail) {
+        var tryCount = 0;
         var url = "https://api.github.com/repos/" + owner + "/" + repo + "/issues"
         url = encodeURI(url + this._paramString([
             ["milestone", [milestone]], ["state", [state]],
             ["assignee", [assignee]], ["labels", labels], ["sort", [sort]],
             ["direction", [direction]]
         ]))
-        $.get(url, function(response) {
-            onsuccess(response.slice(0, Math.min(max, response.length)));
-        }).fail(function() {
-            onfail();
-        });
+        var main = function () {
+            $.get(url, function (response) {
+                //check for empty response
+                try{
+                    if ($.isEmptyObject(response) && tryCount < MAX_RETRIES) {
+                        tryCount++;
+                        throw emptyResponse;
+                    }
+                    onsuccess(response.slice(0, Math.min(max, response.length)));
+                }
+                catch (e) {
+                    //retry if emptyResponse
+                    if (e instanceof emptyResponse) {
+                        console.log(e.toString);
+                        main();
+                    }
+                }
+            }).fail(function () {
+                    onfail();
+            });
+        }
+        main();
     },
     punch_card: function (owner, repo, onsuccess, onfail) {
-        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/punch_card", function(response) {
-            onsuccess(response);
-        }).fail(function() {
-            onfail();
-        });
+        var tryCount = 0;
+        var main = function () {
+            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/punch_card", function (response) {
+                //check for empty response
+                try{
+                    if ($.isEmptyObject(response) && tryCount < MAX_RETRIES) {
+                        tryCount++;
+                        throw emptyResponse;
+                    }
+                    onsuccess(response);
+                }
+                catch (e) {
+                    //retry if emptyResponse
+                    if (e instanceof emptyResponse) {
+                        console.log(e.toString);
+                        main();
+                    }
+                }
+            }).fail(function () {
+                    onfail();
+            });
+        }
+        main();
     },
     /* Create a URL parameter string.
      *
