@@ -84,8 +84,8 @@ var chart = {
     this._create(type, data, {}, callback)  //actually makes image.
   },
     
-    //a graph that lets the user specify how many weeks back they want to view
-    dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
+  //a graph that lets the user specify how many weeks back they want to view
+  dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
     var date = new Date()
     date.setDate(date.getDate() - 358)  //sets default to 51 weeks ago. this allows most recent week to be shown.
