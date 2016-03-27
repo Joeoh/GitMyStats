@@ -51,7 +51,7 @@ var chart = {
       ["Saturday", commits[6]]
     ]
     data = this._toChartData(data)
-    data.datasets[0].label = "Daily commits to " + repo + " this week"
+    data.datasets[0].label = "Commits this year to " + repo + " sorted by weekday"
     data.datasets[0].backgroundColor = "#32F331"
     this._create(type, data, {}, callback)
   },
@@ -83,7 +83,8 @@ var chart = {
     data.datasets[0].backgroundColor = "#42F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
-
+    
+    //a graph that lets the user specify how many weeks back they want to view
     dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
     var date = new Date()
