@@ -3,6 +3,7 @@
 <style type="text/css">
     #weeks{display:none;}
     #days{display:none;}
+    #dateRange{display: none;}
 </style>
 
 <dom-module id="commits-page">
@@ -15,19 +16,23 @@
                 <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
             <div>
-                <label class="ms-Label">Weekday or Week</label>
+                <label class="ms-Label">What type of graph would you like?</label>
                 <select id="mode" required onchange="weekOrWeekday()">
-                    <option value="">Choose graph.</option>
+                    <option value="">Please select a graph type:</option>
                     <option value="weekday">Weekday</option>
-                    <option value="week">Week</option>
+                    <option value="week">All weeks since created</option>
+                    <option value="dateRange">Date range</option>
                 </select>
             </div>
             <div id="weeks">
-            <label class="ms-Label">How many weeks?</label>
+            <label class="ms-Label">How many weeks back from now would you like to view?</label>
                  <input id="howManyWeeks" min="1" max="52" type="number" placeholder="eg: 10" class="ms-TextField-field">
             </div>
             <div id="days">
-                 <label class="ms-Label">View the last 7 days of commits.</label>
+                <label class="ms-Label">Views the last 7 days of commits.</label>
+            </div>
+            <div id="dateRange">
+                <label class="ms-Label">Views the commits, rounded to each week since creation.</label>
             </div>
             <label class="ms-Label">Chart Type</label>
             <select id="chartType">
@@ -59,6 +64,7 @@
                 var repo = url.split("/")[1]
                 var mode = this.$.mode.value
                 var chartType = this.$$("#chartType").value
+                var weeksToDo = this.$$("#howManyWeeks").value
 
 				// Make sure the URL is filled in.
 				if (!url) {
@@ -92,11 +98,21 @@
 					github.participation(owner, repo, function(response) {
 						chart.weeklyCommits(repo, response, chartType, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                            document.getElementById("mistake").innerHTML=response[50]+"h" + response[51];
                         })
 					}, function() {
                         this.fire("showErrorMessage", {text: "Connection Failed."});
                     });
 				}
+                else if (mode == "dateRange"){
+                    github.participation(owner, repo, function(response) {
+                        chart.dateRangeCommits(repo, response, chartType, weeksToDo, function(base64Image) {
+                            insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                        })
+                    }, function() {
+                        this.fire("showErrorMessage", {text: "Connection Failed."});
+                    });
+                }
                 else {
                     document.getElementById("mistake").innerHTML="You have not selected a graph type";
                 }
@@ -107,11 +123,21 @@
             {
                 document.getElementById("days").style.display="block";
                 document.getElementById("weeks").style.display="none";
+                document.getElementById("range").style.display="none";
+
             }
-            else if (document.getElementById("mode").value=="week")
+            else if (document.getElementById("mode").value=="dateRange")
             {
                 document.getElementById("days").style.display="none";
                 document.getElementById("weeks").style.display="block";
+                document.getElementById("range").style.display="none";
+
+            }
+            else if (document.getElementById("mode").value=="weeks")
+            {
+                document.getElementById("days").style.display="none";
+                document.getElementById("weeks").style.display="none";
+                document.getElementById("dateRange").style.display="block";
             }
         }
     </script>
