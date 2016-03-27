@@ -52,7 +52,7 @@ var chart = {
     ]
     data = this._toChartData(data)
     data.datasets[0].label = "Daily commits to " + repo + " this week"
-    data.datasets[0].backgroundColor = "#88D3A1"
+    data.datasets[0].backgroundColor = "#32F331"
     this._create(type, data, {}, callback)
   },
   /*
@@ -80,7 +80,7 @@ var chart = {
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)    //readies data for chart usage.
     data.datasets[0].label = "Weekly commits to " + repo + " since inception"
-    data.datasets[0].backgroundColor = "#88D3A1"
+    data.datasets[0].backgroundColor = "#42F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
 
@@ -104,7 +104,7 @@ var chart = {
     // create parameters suitable for Chart.js
     var data = this._toChartData(spares)  //make chart from spares, not data.
     data.datasets[0].label = "Weekly commits to " + repo
-    data.datasets[0].backgroundColor = "#88D3A1"
+    data.datasets[0].backgroundColor = "#42F351"
     this._create(type, data, {}, callback)
   },
 
