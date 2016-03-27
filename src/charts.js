@@ -51,7 +51,7 @@ var chart = {
       ["Saturday", commits[6]]
     ]
     data = this._toChartData(data)
-    data.datasets[0].label = "Commits to " + repo
+    data.datasets[0].label = "Daily commits to " + repo + " this week"
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create(type, data, {}, callback)
   },
@@ -87,7 +87,7 @@ var chart = {
     dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
     var date = new Date()
-    date.setDate(date.getDate() - 365)  //sets default to 51 weeks ago. this allows most recent week to be shown.
+    date.setDate(date.getDate() - 358)  //sets default to 51 weeks ago. this allows most recent week to be shown.
     var data = []
     for (var i = 0; i < weeks.length; i++) {
       var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" +
