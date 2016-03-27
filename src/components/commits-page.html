@@ -68,7 +68,7 @@
                 var repo = url.split("/")[1]
                 var mode = this.$.mode.value
                 var chartType = this.$$("#chartType").value
-                var weeksToDo = this.$$("#howManyWeeks").value
+                var weeksToDo = this.$$("#howManyWeeks").value  //only used for weeksRange.
 
 				// Make sure the URL is filled in.
 				if (!url) {
@@ -108,13 +108,10 @@
                     });
 				}
                 else if (mode == "dateRange"){
-                    if (howManyWeeks.value > 52 )
-                    {   //shows error message when user wants more than 1 year of data.
+                    if (howManyWeeks.value > 52 ){   //shows error message when user wants more than 1 year of data.
                         document.getElementById("tooBig").style.color = "#ff0000";
-                        document.getElementById("tooBig").style.display="block";
-                    }
-                    else 
-                    {
+                        document.getElementById("tooBig").style.display="block";}
+                    else {
                         document.getElementById("tooBig").style.display="none";
 
                         github.participation(owner, repo, function(response) {
@@ -123,43 +120,36 @@
                             })  //calls the chart making function that has an extra parameter for how many weeks backl it wants.
                         }, function() {
                             this.fire("showErrorMessage", {text: "Connection Failed."});
-                        });
-                    }
+                        });}
                 }
                 else {
-                    document.getElementById("mistake").style.color = "#ff0000";
+                    document.getElementById("mistake").style.color = "#ff0000"; //makes it red.
                     document.getElementById("mistake").style.display="block";
                 }
             }
         });
-        function weekOrWeekday(){
-            if (document.getElementById("mode").value=="weekday")
-            {
+        //shows or hides the text based on what's needed. texts here hold both descriptions and errors.
+        function weekOrWeekday(){       
+            if (document.getElementById("mode").value=="weekday"){
                 document.getElementById("days").style.display="block";
                 document.getElementById("weeks").style.display="none";
                 document.getElementById("dateRanges").style.display="none";
-                document.getElementById("mistake").style.display="none";
-                document.getElementById("tooBig").style.display="none";
-
-
+                document.getElementById("mistake").style.display="none"; //always hidden when a new option is selected.
+                document.getElementById("tooBig").style.display="none"; //always hidden when a new option is selected.
             }
-            else if (document.getElementById("mode").value=="dateRange")
-            {
+            else if (document.getElementById("mode").value=="dateRange"){
                 document.getElementById("days").style.display="none";
                 document.getElementById("weeks").style.display="none";
                 document.getElementById("dateRanges").style.display="block";
                 document.getElementById("mistake").style.display="none";
                 document.getElementById("tooBig").style.display="none";
-
             }
-            else if (document.getElementById("mode").value=="week")
-            {
+            else if (document.getElementById("mode").value=="week"){
                 document.getElementById("days").style.display="none";
                 document.getElementById("weeks").style.display="block";
                 document.getElementById("dateRanges").style.display="none";
                 document.getElementById("mistake").style.display="none";
                 document.getElementById("tooBig").style.display="none";
-
             }
         }
     </script>

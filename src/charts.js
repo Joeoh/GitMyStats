@@ -73,7 +73,7 @@ var chart = {
       var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" +
                        (date.getFullYear() + "").substring(2, 4)
       data.push([dateString, weeks[i]])
-      date.setDate(date.getDate() + 7)
+      date.setDate(date.getDate() + 7)    //labels increment weekly.
     }
     // trim blank weeks from array ends
     data = data.trimEnds(function(x) { return !x[1] })      //gets rid of blank weeks at start.
@@ -97,16 +97,12 @@ var chart = {
     }
 
     var spares = []
-    for (var j = weeks.length-(recentWeeks); j < weeks.length; j++)
-    {
+    for (var j = weeks.length-(recentWeeks); j < weeks.length; j++){
       spares.push(data[j])
     }
-    
-    // trim blank weeks from array ends
-    //data = data.trimEnds(function(x) { return !x[1] })
-    // create parameters suitable for Chart.js
 
-    var data = this._toChartData(spares)
+    // create parameters suitable for Chart.js
+    var data = this._toChartData(spares)  //make chart from spares, not data.
     data.datasets[0].label = "Weekly commits to " + repo
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create(type, data, {}, callback)
