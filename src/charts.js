@@ -79,7 +79,7 @@ var chart = {
     data = data.trimEnds(function(x) { return !x[1] })      //gets rid of blank weeks at start.
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)    //readies data for chart usage.
-    data.datasets[0].label = "Weekly commits to " + repo + "since inception"
+    data.datasets[0].label = "Weekly commits to " + repo + " since inception"
     data.datasets[0].backgroundColor = "#88D3A1"
     this._create(type, data, {}, callback)  //actually makes image.
   },

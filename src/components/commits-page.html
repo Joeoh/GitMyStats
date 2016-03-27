@@ -42,8 +42,8 @@
             <div id="weeks">
                 <label class="ms-Label">Views the commits, rounded to each week since creation.</label>
             </div>
-            <div id="tooBig">Please enter a number below 52.</div>
-            <div id="mistake">You have not entered a graph type. Try again.</div>
+            <div id="tooBig">The date range can only display 52 weeks. Try again with 52 or less.</div>
+            <div id="mistake">You didn't enter a graph type. Please try again.</div>
             <p>
             <button-pair></button-pair>
         </form>
@@ -113,17 +113,16 @@
                         document.getElementById("tooBig").style.display="block";}
                     else {
                         document.getElementById("tooBig").style.display="none";
-
-                        github.participation(owner, repo, function(response) {
-                            chart.dateRangeCommits(repo, response, chartType, weeksToDo, function(base64Image) {
+                        github.participation(owner, repo, function(response){
+                            chart.dateRangeCommits(repo, response, chartType, weeksToDo, function(base64Image){
                                 insertData(base64Image.replace("data:image/png;base64,",""), "image");
-                            })  //calls the chart making function that has an extra parameter for how many weeks backl it wants.
+                            })  //calls the chart making function that has an extra parameter for how many weeks back it wants.
                         }, function() {
                             this.fire("showErrorMessage", {text: "Connection Failed."});
                         });}
                 }
-                else {
-                    document.getElementById("mistake").style.color = "#ff0000"; //makes it red.
+                else {  //show big red error for incorrect weeks value.
+                    document.getElementById("mistake").style.color = "#ff0000"; 
                     document.getElementById("mistake").style.display="block";
                 }
             }
