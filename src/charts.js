@@ -50,8 +50,11 @@ var chart = {
       ["Thursday", commits[4]], ["Friday", commits[5]],
       ["Saturday", commits[6]]
     ]
+    //creates a string of today's date, to display on the graph title.
+    var date = new Date()
+    var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
     data = this._toChartData(data)
-    data.datasets[0].label = "Commits from this year to " + repo + " by day."
+    data.datasets[0].label = "Commits from this year to " + repo + " by day, as of " + dateDisplay + ""
     data.datasets[0].backgroundColor = "#32F331"
     this._create(type, data, {}, callback)
   },
@@ -75,11 +78,14 @@ var chart = {
       data.push([dateString, weeks[i]])
       date.setDate(date.getDate() + 7)    //labels increment weekly.
     }
+    //creates a string of today's date, to display on the graph title.
+    var date = new Date()
+    var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
     // trim blank weeks from array ends
     data = data.trimEnds(function(x) { return !x[1] })      //gets rid of blank weeks at start.
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)    //readies data for chart usage.
-    data.datasets[0].label = "Weekly commits to " + repo + " since inception"
+    data.datasets[0].label = "Weekly commits to " + repo + " since inception, as of " + dateDisplay + ""
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
@@ -107,6 +113,10 @@ var chart = {
       date.setDate(date.getDate() + 7) 
     }
 
+    //creates a string of today's date, to display on the graph title.
+    var date = new Date()
+    var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
+    //create array of correct length (only contains weeks being displayed.)
     var spares = []
     for (var j = weeks.length-(recentWeeks); j < weeks.length; j++){
       spares.push(data[j])
@@ -114,7 +124,7 @@ var chart = {
 
     // create parameters suitable for Chart.js
     var data = this._toChartData(spares)  //make chart from spares, not data.
-    data.datasets[0].label = "Weekly commits to " + repo
+    data.datasets[0].label = "Weekly commits to " + repo + "as of " + dateDisplay + ""
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },

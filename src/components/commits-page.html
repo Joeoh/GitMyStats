@@ -26,14 +26,14 @@
                 <label class="ms-Label">What commit data would you like to see?</label>
                 <select id="mode" required onchange="weekOrWeekday()">
                     <option value="">Please select a graph type:</option>
-                    <option value="weekday">Full year, grouped by day committed.</option>
-                    <option value="week">All weeks since created</option>
+                    <option value="weekday">Day committed, all from last 1 year.</option>
+                    <option value="week">Each week since created</option>
                     <option value="dateRange">Weeks ranging from...</option>
                 </select>
             </div>
             <div id="dateRanges">
                 <label class="ms-Label">How many weeks back from now would you like to view?</label>
-                     <input id="howManyWeeks" min="1" max="52" type="number" maxlength="2" placeholder="eg: 10" class="ms-TextField-field">
+                     <input id="howManyWeeks" min="1" max="52" type="number" maxlength="2" value ="10" class="ms-TextField-field">
             </div>
             <div id="days">
                 <label class="ms-Label">Views all commits to a repository, sorted by which day the commit was done.</label>
@@ -110,10 +110,9 @@
                 else if (mode == "dateRange"){
                     if (howManyWeeks.value > 52 ){   //shows error message when user wants more than 1 year of data.
                         //this.fire("showErrorMessage", {text: ""});
-                        this.fire("showErrorMessage", {text: "The date range can only display up to 52 weeks. Try again with 52 or less."})
+                        this.fire("showErrorMessage", {text: "Maximum of 52 weeks. Try again."})
                     }
                     else {
-                        document.getElementById("tooBig").style.display="none";
                         github.participation(owner, repo, function(response){
                             chart.dateRangeCommits(repo, response, chartType, weeksToDo, function(base64Image){
                                 insertData(base64Image.replace("data:image/png;base64,",""), "image");
@@ -123,7 +122,7 @@
                         });}
                 }
                 else {  //show big red error for unselected graph type.
-                    this.fire("showErrorMessage", {text: "You didn't enter a graph type. Please try again."});
+                    this.fire("showErrorMessage", {text: "No graph values selected."});
                 }
             }
         });
