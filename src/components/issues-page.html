@@ -108,11 +108,18 @@
                 github.issues(owner, repo, state, null, null, function(response) {
                     for (var key in response) {
                         if (response.hasOwnProperty(key)) {
-                            var issueCreated = response[key].created_at;
-                            var inDateRange = (unixStartDate <= issueCreated) && ( issueCreated <= unixEndDate);
+                            var issueCreated = new Date(response[key].created_at);
+                            var unixIssueCreated = new Date(issueCreated).getTime() / 1000;
+                            var inDateRange = (unixStartDate <= unixIssueCreated) && ( unixIssueCreated <= unixEndDate);
                             var correctUser = (!singleUser) || selectedUser == response[key].user.login;
-                            if (inDateRange && correctUser) {
-                                //console.log(key, response[key]);
+                            if (correctUser && inDateRange) {
+                                /*
+                                console.log("inDate : " + inDateRange);
+                                console.log("createdAt : " + issueCreated);
+                                console.log("unixCreated" + unixIssueCreated);
+                                console.log("unixStart : " + unixStartDate);
+                                console.log("unixEnd : " + unixEndDate);
+                                */
                                 insertString += "Title : " + response[key].title + "\n";
                                 insertString += "Description : " + response[key].body + "\n";
                                 insertString += "Created at : " + response[key].created_at + "\n";
@@ -126,7 +133,7 @@
                     insertData(insertString, "text");
                     //console.log(insertString);
                 }, function() {
-                    this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection."})
+                    this.fire("showErrorMessage", {text: "Connection Failed.Please check your internet connection."})
                 })
 
                         //I've been using the following code as an example to work from, not actually used here! :)
