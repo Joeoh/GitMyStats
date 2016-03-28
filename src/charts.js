@@ -51,7 +51,7 @@ var chart = {
       ["Saturday", commits[6]]
     ]
     data = this._toChartData(data)
-    data.datasets[0].label = "Commits from this year to " + repo + " by week day."
+    data.datasets[0].label = "Commits from this year to " + repo + " by day."
     data.datasets[0].backgroundColor = "#32F331"
     this._create(type, data, {}, callback)
   },
@@ -84,8 +84,17 @@ var chart = {
     this._create(type, data, {}, callback)  //actually makes image.
   },
 
-    //creates a graph that shows the weekly commits for a user-specified number of weeks from now to "x" weeks ago.
-    //this number is called "recentWeeks" in the parameter list. other than that it's the same as the other weekly graph.
+    /*
+   * Generate a base 64 encoded image of a chart of commits per week, within user specified tiem range.
+   *creates a graph that shows the weekly commits for a user-specified number of weeks from now to "x" weeks ago.
+   *this number is called "recentWeeks" in the parameter list. other than that it's the same as the other weekly graph.
+   * Args:
+   *   repo: String, the title of the repository.
+   *   weeks: [Number], commits per week with index 0 the most recent week.
+   *   type: String, the type of chart to create.
+   *   recentWeeks: Int, specifies how many weeks back from present the graph shows.
+   *   callback: Function, callback that takes the image as first argument.
+   */
     dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
     var date = new Date()

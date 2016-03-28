@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+//these are all set as display none because they only appear if and when prompted by selection.
 <style type="text/css">
     #weeks{display:none;}
     #days{display:none;}
@@ -25,7 +26,7 @@
                 <label class="ms-Label">What commit data would you like to see?</label>
                 <select id="mode" required onchange="weekOrWeekday()">
                     <option value="">Please select a graph type:</option>
-                    <option value="weekday">Every day this week</option>
+                    <option value="weekday">Full year, grouped by day committed.</option>
                     <option value="week">All weeks since created</option>
                     <option value="dateRange">Weeks ranging from...</option>
                 </select>
@@ -35,10 +36,10 @@
                      <input id="howManyWeeks" min="1" max="52" type="number" maxlength="2" placeholder="eg: 10" class="ms-TextField-field">
             </div>
             <div id="days">
-                <label class="ms-Label">Views the last 7 days of commits.</label>
+                <label class="ms-Label">Views all commits to a repository, sorted by which day the commit was done.</label>
             </div>
             <div id="weeks">
-                <label class="ms-Label">Views the commits, rounded to each week since creation.</label>
+                <label class="ms-Label">Views all commits since creation, sorted by each week.</label>
             </div>
             <p>
             <button-pair></button-pair>
