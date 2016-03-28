@@ -26,7 +26,7 @@ function insertData(data, type) {
                 if(res.error.name == "Data Write Error"){
                     showError("Unable to insert", "Please select an area in the document to insert the data");
                 } else {
-                    //showError("Sorry!", "An error occurred inserting the data - please try again \n Error code: " + res.error.name);
+                    showError("Sorry!", "An error occurred inserting the data - please try again \n Error code: " + res.error.name);
                     console.log(res.error);
                 }
             }
