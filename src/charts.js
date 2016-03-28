@@ -50,9 +50,12 @@ var chart = {
       ["Thursday", commits[4]], ["Friday", commits[5]],
       ["Saturday", commits[6]]
     ]
+    //creates a string of today's date, to display on the graph title.
+    var date = new Date()
+    var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
     data = this._toChartData(data)
-    data.datasets[0].label = "Commits to " + repo
-    data.datasets[0].backgroundColor = "#88D3A1"
+    data.datasets[0].label = "Commits from this year to " + repo + " by day, as of " + dateDisplay + "."
+    data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
   /*
@@ -67,22 +70,65 @@ var chart = {
   weeklyCommits: function(repo, weeks, type, callback) {
     // create an array of [[label, value]]
     var date = new Date()
-    date.setDate(date.getDate() - 365)
+    date.setDate(date.getDate() - 358)  //sets default to 51 weeks ago. this allows most recent week to be shown.
     var data = []
     for (var i = 0; i < weeks.length; i++) {
-      var dateString = date.getDate() + "/" + date.getMonth() + "/" +
+      var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" +
                        (date.getFullYear() + "").substring(2, 4)
       data.push([dateString, weeks[i]])
-      date.setDate(date.getDate() + 7)
+      date.setDate(date.getDate() + 7)    //labels increment weekly.
     }
+    //creates a string of today's date, to display on the graph title.
+    var date = new Date()
+    var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
     // trim blank weeks from array ends
-    data = data.trimEnds(function(x) { return !x[1] })
+    data = data.trimEnds(function(x) { return !x[1] })      //gets rid of blank weeks at start.
     // create parameters suitable for Chart.js
-    var data = this._toChartData(data)
-    data.datasets[0].label = "Commits to " + repo
-    data.datasets[0].backgroundColor = "#88D3A1"
+    var data = this._toChartData(data)    //readies data for chart usage.
+    data.datasets[0].label = "Weekly commits to " + repo + " since inception, as of " + dateDisplay + "."
+    data.datasets[0].backgroundColor = "#32F351"
+    this._create(type, data, {}, callback)  //actually makes image.
+  },
+
+   /*
+   * Generate a base 64 encoded image of a chart of commits per week.
+   *
+   * Args:
+   *   repo: String, the title of the repository.
+   *   weeks: [Number], commits per week with index 0 the most recent week.
+   *   type: String, the type of chart to create.
+   *   recentWeeks: Integer, specifies how many weeks of commits to display.
+   *   callback: Function, callback that takes the image as first argument.
+   */
+  //a graph that lets the user specify how many weeks back they want to view
+  dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
+    // create an array of [[label, value]]
+    var date = new Date()
+    date.setDate(date.getDate() - 358)  //sets default to 51 weeks ago. this allows most recent week to be shown.
+    var data = []
+    for (var i = 0; i < weeks.length; i++) {
+      var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" +
+                       (date.getFullYear() + "").substring(2, 4)
+      data.push([dateString, weeks[i]])
+      date.setDate(date.getDate() + 7) 
+    }
+
+    //creates a string of today's date, to display on the graph title.
+    var date = new Date()
+    var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
+    //create array of correct length (only contains weeks being displayed.)
+    var spares = []
+    for (var j = weeks.length-(recentWeeks); j < weeks.length; j++){
+      spares.push(data[j])
+    }
+
+    // create parameters suitable for Chart.js
+    var data = this._toChartData(spares)  //make chart from spares, not data.
+    data.datasets[0].label = "Weekly commits to " + repo + " as of " + dateDisplay + "."
+    data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
+
   // points: [[value, label]]
   pie: function(points, callback) {
     var data = this._toChartData(points)
