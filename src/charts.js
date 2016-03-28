@@ -55,7 +55,7 @@ var chart = {
     var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
     data = this._toChartData(data)
     data.datasets[0].label = "Commits from this year to " + repo + " by day, as of " + dateDisplay + ""
-    data.datasets[0].backgroundColor = "#32F331"
+    data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
   /*
