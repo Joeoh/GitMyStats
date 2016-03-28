@@ -113,7 +113,7 @@
                         this.fire("showErrorMessage", {text: "Maximum of 52 weeks."})
                     }
                     else if (howManyWeeks.value <= 0){
-                        this.fire("showErrorMessage", {text: "Weeks must be at least 1."})
+                        this.fire("showErrorMessage", {text: "Minimum of 1 week."})
                     }
                     else {
                         github.participation(owner, repo, function(response){

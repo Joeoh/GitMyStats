@@ -89,7 +89,17 @@ var chart = {
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
-  
+
+   /*
+   * Generate a base 64 encoded image of a chart of commits per week.
+   *
+   * Args:
+   *   repo: String, the title of the repository.
+   *   weeks: [Number], commits per week with index 0 the most recent week.
+   *   type: String, the type of chart to create.
+   *   recentWeeks: Integer, specifies how many weeks of commits to display.
+   *   callback: Function, callback that takes the image as first argument.
+   */
   //a graph that lets the user specify how many weeks back they want to view
   dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
