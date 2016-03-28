@@ -108,9 +108,12 @@
 				}
                 //graph of commits by week, for a specified range of weeks. from This Week to X Weeks ago.
                 else if (mode == "dateRange"){
-                    if (howManyWeeks.value > 52 ){   //shows error message when user wants more than 1 year of data.
-                        //this.fire("showErrorMessage", {text: ""});
+                    if (howManyWeeks.value > 52 ){
+                        //shows error message when user wants more than 1 year of data.
                         this.fire("showErrorMessage", {text: "Maximum of 52 weeks."})
+                    }
+                    else if (howManyWeeks.value <= 0){
+                        this.fire("showErrorMessage", {text: "Weeks must be at least 1."})
                     }
                     else {
                         github.participation(owner, repo, function(response){

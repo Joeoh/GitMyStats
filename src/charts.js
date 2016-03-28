@@ -124,7 +124,7 @@ var chart = {
 
     // create parameters suitable for Chart.js
     var data = this._toChartData(spares)  //make chart from spares, not data.
-    data.datasets[0].label = "Weekly commits to " + repo + "as of " + dateDisplay + "."
+    data.datasets[0].label = "Weekly commits to " + repo + " as of " + dateDisplay + "."
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
