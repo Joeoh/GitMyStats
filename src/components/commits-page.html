@@ -4,8 +4,6 @@
     #weeks{display:none;}
     #days{display:none;}
     #dateRanges{display: none;}
-    #mistake{display:none;}
-    #tooBig{display:none;}
 </style>
 
 <dom-module id="commits-page">
@@ -42,8 +40,6 @@
             <div id="weeks">
                 <label class="ms-Label">Views the commits, rounded to each week since creation.</label>
             </div>
-            <div id="tooBig">The date range can only display 52 weeks. Try again with 52 or less.</div>
-            <div id="mistake">You didn't enter a graph type. Please try again.</div>
             <p>
             <button-pair></button-pair>
         </form>
@@ -85,6 +81,8 @@
                     this.fire("showErrorMessage", {text: "Invalid repo."})
                     return
                 }
+                                        this.fire("showErrorMessage", {text: ""});
+
                 // graph of commits by weekday
 				if (mode == "weekday") {
 
@@ -107,10 +105,12 @@
                         this.fire("showErrorMessage", {text: "Connection Failed."});
                     });
 				}
+                //graph of commits by week, for a specified range of weeks. from This Week to X Weeks ago.
                 else if (mode == "dateRange"){
                     if (howManyWeeks.value > 52 ){   //shows error message when user wants more than 1 year of data.
-                        document.getElementById("tooBig").style.color = "#ff0000";
-                        document.getElementById("tooBig").style.display="block";}
+                        //this.fire("showErrorMessage", {text: ""});
+                        this.fire("showErrorMessage", {text: "The date range can only display up to 52 weeks. Try again with 52 or less."})
+                    }
                     else {
                         document.getElementById("tooBig").style.display="none";
                         github.participation(owner, repo, function(response){
@@ -121,34 +121,27 @@
                             this.fire("showErrorMessage", {text: "Connection Failed."});
                         });}
                 }
-                else {  //show big red error for incorrect weeks value.
-                    document.getElementById("mistake").style.color = "#ff0000"; 
-                    document.getElementById("mistake").style.display="block";
+                else {  //show big red error for unselected graph type.
+                    this.fire("showErrorMessage", {text: "You didn't enter a graph type. Please try again."});
                 }
             }
         });
-        //shows or hides the text based on what's needed. texts here hold both descriptions and errors.
+        //shows or hides the text or input box based on what's needed. texts here hold both descriptions and errors.
         function weekOrWeekday(){       
             if (document.getElementById("mode").value=="weekday"){
                 document.getElementById("days").style.display="block";
                 document.getElementById("weeks").style.display="none";
                 document.getElementById("dateRanges").style.display="none";
-                document.getElementById("mistake").style.display="none"; //always hidden when a new option is selected.
-                document.getElementById("tooBig").style.display="none"; //always hidden when a new option is selected.
             }
             else if (document.getElementById("mode").value=="dateRange"){
                 document.getElementById("days").style.display="none";
                 document.getElementById("weeks").style.display="none";
                 document.getElementById("dateRanges").style.display="block";
-                document.getElementById("mistake").style.display="none";
-                document.getElementById("tooBig").style.display="none";
             }
             else if (document.getElementById("mode").value=="week"){
                 document.getElementById("days").style.display="none";
                 document.getElementById("weeks").style.display="block";
                 document.getElementById("dateRanges").style.display="none";
-                document.getElementById("mistake").style.display="none";
-                document.getElementById("tooBig").style.display="none";
             }
         }
     </script>

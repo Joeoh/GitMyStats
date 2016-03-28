@@ -51,7 +51,7 @@ var chart = {
       ["Saturday", commits[6]]
     ]
     data = this._toChartData(data)
-    data.datasets[0].label = "Daily commits to " + repo + " this week"
+    data.datasets[0].label = "Commits from this year to " + repo + " by week day."
     data.datasets[0].backgroundColor = "#32F331"
     this._create(type, data, {}, callback)
   },
@@ -80,10 +80,12 @@ var chart = {
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)    //readies data for chart usage.
     data.datasets[0].label = "Weekly commits to " + repo + " since inception"
-    data.datasets[0].backgroundColor = "#42F351"
+    data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
 
+    //creates a graph that shows the weekly commits for a user-specified number of weeks from now to "x" weeks ago.
+    //this number is called "recentWeeks" in the parameter list. other than that it's the same as the other weekly graph.
     dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
     var date = new Date()
@@ -104,7 +106,7 @@ var chart = {
     // create parameters suitable for Chart.js
     var data = this._toChartData(spares)  //make chart from spares, not data.
     data.datasets[0].label = "Weekly commits to " + repo
-    data.datasets[0].backgroundColor = "#42F351"
+    data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
 
