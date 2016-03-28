@@ -89,19 +89,9 @@ var chart = {
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
-
-    /*
-   * Generate a base 64 encoded image of a chart of commits per week, within user specified tiem range.
-   *creates a graph that shows the weekly commits for a user-specified number of weeks from now to "x" weeks ago.
-   *this number is called "recentWeeks" in the parameter list. other than that it's the same as the other weekly graph.
-   * Args:
-   *   repo: String, the title of the repository.
-   *   weeks: [Number], commits per week with index 0 the most recent week.
-   *   type: String, the type of chart to create.
-   *   recentWeeks: Integer, specifies how many weeks back from present the graph shows.
-   *   callback: Function, callback that takes the image as first argument.
-   */
-    dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
+  
+  //a graph that lets the user specify how many weeks back they want to view
+  dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {
     // create an array of [[label, value]]
     var date = new Date()
     date.setDate(date.getDate() - 358)  //sets default to 51 weeks ago. this allows most recent week to be shown.
