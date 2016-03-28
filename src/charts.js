@@ -98,7 +98,7 @@ var chart = {
    *   repo: String, the title of the repository.
    *   weeks: [Number], commits per week with index 0 the most recent week.
    *   type: String, the type of chart to create.
-   *   recentWeeks: Int, specifies how many weeks back from present the graph shows.
+   *   recentWeeks: Integer, specifies how many weeks back from present the graph shows.
    *   callback: Function, callback that takes the image as first argument.
    */
     dateRangeCommits: function(repo, weeks, type, recentWeeks, callback) {

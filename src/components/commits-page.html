@@ -122,7 +122,8 @@
                             })  //calls the chart making function that has an extra parameter for how many weeks back it wants.
                         }, function() {
                             this.fire("showErrorMessage", {text: "Connection Failed."});
-                        });}
+                        });
+                    }
                 }
                 else {  //show big red error for unselected graph type.
                     this.fire("showErrorMessage", {text: "No graph values selected."});
