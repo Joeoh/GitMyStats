@@ -110,7 +110,7 @@
                 else if (mode == "dateRange"){
                     if (howManyWeeks.value > 52 ){   //shows error message when user wants more than 1 year of data.
                         //this.fire("showErrorMessage", {text: ""});
-                        this.fire("showErrorMessage", {text: "Maximum of 52 weeks. Try again."})
+                        this.fire("showErrorMessage", {text: "Maximum of 52 weeks."})
                     }
                     else {
                         github.participation(owner, repo, function(response){

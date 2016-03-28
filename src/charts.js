@@ -54,7 +54,7 @@ var chart = {
     var date = new Date()
     var dateDisplay = date.getDate() + "/" + (date.getMonth() + 1) + "/" + (date.getFullYear() + "").substring(2, 4)
     data = this._toChartData(data)
-    data.datasets[0].label = "Commits from this year to " + repo + " by day, as of " + dateDisplay + ""
+    data.datasets[0].label = "Commits from this year to " + repo + " by day, as of " + dateDisplay + "."
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
@@ -85,7 +85,7 @@ var chart = {
     data = data.trimEnds(function(x) { return !x[1] })      //gets rid of blank weeks at start.
     // create parameters suitable for Chart.js
     var data = this._toChartData(data)    //readies data for chart usage.
-    data.datasets[0].label = "Weekly commits to " + repo + " since inception, as of " + dateDisplay + ""
+    data.datasets[0].label = "Weekly commits to " + repo + " since inception, as of " + dateDisplay + "."
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)  //actually makes image.
   },
@@ -124,7 +124,7 @@ var chart = {
 
     // create parameters suitable for Chart.js
     var data = this._toChartData(spares)  //make chart from spares, not data.
-    data.datasets[0].label = "Weekly commits to " + repo + "as of " + dateDisplay + ""
+    data.datasets[0].label = "Weekly commits to " + repo + "as of " + dateDisplay + "."
     data.datasets[0].backgroundColor = "#32F351"
     this._create(type, data, {}, callback)
   },
