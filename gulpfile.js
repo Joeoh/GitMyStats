@@ -80,7 +80,8 @@ gulp.task('serve', ['build'], () => {
             baseDir: path.debug,
             routes: {
                 '/bower_components': 'bower_components',
-                '/chartjs2beta2': 'chartjs2beta2'
+                '/chartjs2beta2': 'chartjs2beta2',
+                '/images': 'images'
             }
         }
     });
