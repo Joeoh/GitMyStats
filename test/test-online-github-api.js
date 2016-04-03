@@ -72,7 +72,7 @@ var github = require("../src/github.js");
 //test github.contributors
 describe("GitHub API /repos/:owner/:repo/stats/contributors", function() {
     it("should return all contributors", function(done) {
-        github.contributors("joeoh", "gitmystats", null, null, null, function(response){
+        github.contributors("joeoh", "gitmystats", null, null, null, "a", function(response){
             asyncAsserts(done, function(){
                 assert.isOk(response.length > 0, "at least one contributor");
             });
