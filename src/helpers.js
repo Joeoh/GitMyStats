@@ -16,3 +16,10 @@ Array.prototype.trimEnds = function(f) {
     // return new array
     return this.slice(i, j + 1)
 };
+
+// Append n nulls to the array.
+Array.prototype.null = function(n) {
+    for (var i = 0; i < n; i++)
+        this.push(null)
+    return this
+}
