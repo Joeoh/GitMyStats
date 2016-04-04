@@ -3,7 +3,6 @@ const babel       = require('gulp-babel'),
       ftp         = require('vinyl-ftp'),
       gulp        = require('gulp'),
       htmlmin     = require('gulp-htmlmin'),
-      inject      = require('gulp-inject'),
       minifyCss   = require('gulp-minify-css'),
       mocha       = require('gulp-mocha'),
       plumber     = require('gulp-plumber'),
@@ -11,8 +10,7 @@ const babel       = require('gulp-babel'),
       sass        = require('gulp-sass'),
       uglify      = require('gulp-uglify'),
       usemin      = require('gulp-usemin'),
-      util        = require('gulp-util'),
-      wiredep     = require('wiredep').stream;
+      util        = require('gulp-util');
 
 // path regexes to match certain file groups
 const glob = {
@@ -42,12 +40,6 @@ gulp.task('rmrf', () =>
         .pipe(rimraf())
 );
 
-// Applies operations to assets (e.g. images)
-gulp.task('assets', () =>
-    gulp.src(path.src + glob.assets)
-        .pipe(gulp.dest(path.debug + 'assets'))
-);
-
 // Compiles the markup (html)
 gulp.task('markup', () =>
     gulp.src(path.src + glob.html)
@@ -75,21 +67,8 @@ gulp.task('compile-css', () =>
         .pipe(gulp.dest(path.debug))
 );
 
-// Injects compiled scripts and styles, as well as all dependencies into index.html
-gulp.task('inject', ['markup', 'script', 'compile-css'], () => {
-    const sources = gulp.src(
-        [ path.debug + glob.js, path.debug + glob.css ],
-        { read: false }
-    );
- 
-    return gulp.src(path.debug + 'index.html')
-        .pipe(inject(sources, { relative: true }))
-        .pipe(wiredep())
-        .pipe(gulp.dest(path.debug));
-});
-
 // Run tests and create a debug build of the web application
-gulp.task('build', ['assets', 'inject', 'test-offline']);
+gulp.task('build', ['markup', 'script', 'compile-css', 'test-offline']);
 
 // Creates a debug build and serves it at https://localhost:8443/
 gulp.task('serve', ['build'], () => {
@@ -99,7 +78,12 @@ gulp.task('serve', ['build'], () => {
         port: 8443,
         server: {
             baseDir: path.debug,
-            routes: { '/bower_components': 'bower_components' }
+            routes: {
+                '/bower_components': 'bower_components',
+                '/chartjs2beta2': 'chartjs2beta2',
+                '/privacy-policy': 'src/privacy-policy-page.html',
+                '/support': 'src/support-page.html'
+            }
         }
     });
 

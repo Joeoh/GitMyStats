@@ -1,21 +1,47 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+//these are all set as display none because they only appear if and when prompted by selection.
+<style type="text/css">
+    #weeks{display:none;}
+    #days{display:none;}
+    #dateRanges{display: none;}
+</style>
+
 <dom-module id="commits-page">
 
     <template>
         <form>
-            <label class="ms-fontWeight-semibold">Commits graph</label>
+            <label class="ms-fontWeight-semibold">Commits</label>
             <div class="ms-TextField">
                 <label class="ms-Label">Repository URL</label>
                 <input  id="repositoryURL" value="{{repo::input}}" class="ms-TextField-field">
             </div>
+            <label class="ms-Label">Chart Type</label>
+                <select id="chartType">
+                    <option value="bar">Bar</option>
+                    <option value="line">Line</option>
+                </select>
+            <p>
             <div>
-                <label class="ms-Label">By Weekday Or Week</label>
-                <select id="mode">
-                    <option value="weekday">Weekday</option>
-                    <option value="week">Week</option>
+                <label class="ms-Label">What commit data would you like to see?</label>
+                <select id="mode" required onchange="weekOrWeekday()">
+                    <option value="">Please select a graph type:</option>
+                    <option value="weekday">Day committed, all from last 1 year.</option>
+                    <option value="week">Each week since created</option>
+                    <option value="dateRange">Weeks ranging from...</option>
                 </select>
             </div>
+            <div id="dateRanges">
+                <label class="ms-Label">How many weeks back from now would you like to view?</label>
+                     <input id="howManyWeeks" min="1" max="52" type="number" maxlength="2" value ="10" class="ms-TextField-field">
+            </div>
+            <div id="days">
+                <label class="ms-Label">Views all commits to a repository, sorted by which day the commit was done.</label>
+            </div>
+            <div id="weeks">
+                <label class="ms-Label">Views all commits since creation, sorted by each week.</label>
+            </div>
+            <p>
             <button-pair></button-pair>
         </form>
     </template>
@@ -27,15 +53,19 @@
                 "button-pair-insert": "insert"
             },
             properties: {
+                // the current user/repo string
                 repo: {
                     type: String,
                     notify: true
                 }
             },
             insert: function() {
-                var url = this.$.repositoryURL.value;
-                var owner = url.split("/")[0];
-                var repo = url.split("/")[1];
+                var url = this.$.repositoryURL.value
+                var owner = url.split("/")[0]
+                var repo = url.split("/")[1]
+                var mode = this.$.mode.value
+                var chartType = this.$$("#chartType").value
+                var weeksToDo = this.$$("#howManyWeeks").value  //only used for weeksRange.
 
 				// Make sure the URL is filled in.
 				if (!url) {
@@ -52,27 +82,72 @@
                     this.fire("showErrorMessage", {text: "Invalid repo."})
                     return
                 }
-				if (this.$.mode.value == "weekday") {
+                                        this.fire("showErrorMessage", {text: ""});
+
+                // graph of commits by weekday
+				if (mode == "weekday") {
+
                     var self = this;
 					github.commit_activity(owner, repo, function(response) {
-						chart.weekdayCommits(repo, response, function(base64Image) {
+						chart.weekdayCommits(repo, response, chartType, function(base64Image) {
 							insertData(base64Image.replace("data:image/png;base64,",""), "image");
 						})
 					}, function() {
-                        this.fire("showErrorMessage", {text: "Connection Failed.<br>Please check your internet connection"})
+                        this.fire("showErrorMessage", {text: "Connection Failed."})
                     });
 				}
-				else {
+                // graph of commits by week
+				else if (mode == "week"){
 					github.participation(owner, repo, function(response) {
-						chart.participation(repo, response, function(base64Image) {
+						chart.weeklyCommits(repo, response, chartType, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
                         })
 					}, function() {
                         this.fire("showErrorMessage", {text: "Connection Failed."});
                     });
 				}
+                //graph of commits by week, for a specified range of weeks. from This Week to X Weeks ago.
+                else if (mode == "dateRange"){
+                    if (howManyWeeks.value > 52 ){
+                        //shows error message when user wants more than 1 year of data.
+                        this.fire("showErrorMessage", {text: "Maximum of 52 weeks."})
+                    }
+                    else if (howManyWeeks.value <= 0){
+                        this.fire("showErrorMessage", {text: "Minimum of 1 week."})
+                    }
+                    else {
+                        github.participation(owner, repo, function(response){
+                            chart.dateRangeCommits(repo, response, chartType, weeksToDo, function(base64Image){
+                                insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                            })  //calls the chart making function that has an extra parameter for how many weeks back it wants.
+                        }, function() {
+                            this.fire("showErrorMessage", {text: "Connection Failed."});
+                        });
+                    }
+                }
+                else {  //show big red error for unselected graph type.
+                    this.fire("showErrorMessage", {text: "No graph values selected."});
+                }
             }
         });
+        //shows or hides the text or input box based on what's needed. texts here hold both descriptions and errors.
+        function weekOrWeekday(){       
+            if (document.getElementById("mode").value=="weekday"){
+                document.getElementById("days").style.display="block";
+                document.getElementById("weeks").style.display="none";
+                document.getElementById("dateRanges").style.display="none";
+            }
+            else if (document.getElementById("mode").value=="dateRange"){
+                document.getElementById("days").style.display="none";
+                document.getElementById("weeks").style.display="none";
+                document.getElementById("dateRanges").style.display="block";
+            }
+            else if (document.getElementById("mode").value=="week"){
+                document.getElementById("days").style.display="none";
+                document.getElementById("weeks").style.display="block";
+                document.getElementById("dateRanges").style.display="none";
+            }
+        }
     </script>
 
 </dom-module>
