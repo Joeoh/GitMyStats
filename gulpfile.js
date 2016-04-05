@@ -81,6 +81,7 @@ gulp.task('serve', ['build'], () => {
             routes: {
                 '/bower_components': 'bower_components',
                 '/chartjs2beta2': 'chartjs2beta2',
+                '/src/images': 'src/images',
                 '/privacy-policy': 'src/privacy-policy-page.html',
                 '/support': 'src/support-page.html'
             }
