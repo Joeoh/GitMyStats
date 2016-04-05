@@ -15,331 +15,173 @@
       console.log("failed")
     });
 */
+const OPEN = 1;
+const CLOSED = -1;
+const ALL = 0;
 
-const MAX_RETRIES = 2;
+//checks if a unix timestamp is within two others inclusively.
+var withinTime = function(start_week, end_week, input_week){
+    return ((start_week === null && end_week === null) ||
+            (start_week === null && input_week <= end_week ) ||
+            (start_week <= input_week && end_week === null) ||
+            (start_week <= input_week && input_week <= end_week))
+};
 
-function emptyResponse(){
-    this.name = "Empty Response";
-    this.message = "Retrying";
-    this.toString = this.name + ":\t" + this.message;
-}
+
+var formIssueQueryString = function(state, milestone, label){
+
+    var stateQuery = "state=";                          //form individual queries
+    switch (state) {
+        case OPEN:
+            stateQuery += "open";
+            break;
+        case CLOSED:
+            stateQuery += "closed";
+            break;
+        case ALL:
+            stateQuery = "";
+            break;
+        default:
+            stateQuery = "";
+    }
+
+    var milestoneQuery;
+    if (milestone === null || milestone <= 0)
+        milestoneQuery = "";
+    else
+        milestoneQuery = "milestone=" + milestone;
+
+    var labelQuery;
+    if (label === null)
+        labelQuery = "";
+    else
+        labelQuery = label;
+
+    var queryString = "?" + stateQuery;                //correctly concatenate queries
+    if (queryString === "?")
+        queryString += milestoneQuery;
+    else if (milestoneQuery !== "")
+        queryString += "&" + milestoneQuery;
+    if (queryString === "?")
+        queryString += labelQuery;
+    else if (labelQuery !== "")
+        queryString += "&" + labelQuery;
+    if (queryString === "?")
+        queryString = "";
+
+    return queryString;
+};
 
 var github = {
     /**
      * GET /repos/:owner/:repo/stats/commit_activity
      * @return {Array} Commits per day of the week for the last year, starting on Sunday.
      */
-    commit_activity: function (owner, repo, onsuccess, onfail) {
-        var tryCount = 0;
-        var main = function () {
-            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function (response) {
-                try {
-                    //check for empty responses
-                    if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
-                        tryCount++;
-                        throw new emptyResponse();
-                    }
-                    var days = [0, 0, 0, 0, 0, 0, 0]
-                    for (var i = 0; i < response.length; i++) {
-                        for (var j = 0; j < 7; j++) {
-                            days[j] += response[i].days[j]
-                        }
-                    }
-                    onsuccess(days)
+    commit_activity: function(owner, repo, onsuccess, onfail) {
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function(response) {
+            var days = [0, 0, 0, 0, 0, 0, 0];
+            for (var i in response) {
+                for (var day in response[i].days) {
+                    days[day] += response[i].days[day];
                 }
-                catch (e) {
-                    if (e instanceof emptyResponse) {
-                        //retry if empty response caught
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail()
-            })
-        }
-        main();
-    },
-    /*
-     * Convert the response from `contributors` to an array of [String, Number],
-     * where String is a username and Number is the amount of contributions of
-     * of given type by that user.
-     *
-     * Args:
-     *   contributions: [Object], a subset of the response received from GitHub
-     *   type: String, "a", "d", or "c" for additions, deletions or combined.
-     *
-     * Return:
-     *   See main description.
-     */
-    contributionsPerUser: function(contributions, type) {
-        // calulate sum of contributions per week
-        var sums = {} // {username: total}
-        // for each user
-        for (var i = 0; i < contributions.length; i++) {
-            var username = contributions[i].author.login
-            if (!(username in sums))
-                sums[username] = 0
-            var weeks = contributions[i].weeks
-            // for each week
-            for (var j = 0; j < weeks.length; j++)
-                sums[username] += weeks[j][type]
-        }
-        // // convert from {username: total} to [username, total]
-        return Object.keys(sums).map(function (username) {
-            return [username, sums[username]]
-        })
-    },
-    /*
-     * Convert the response from `contributors` to an array of [Date, Number],
-     * where Date represents the week and Number is the amount of contributions
-     * of given type for that week.
-     *
-     * Args:
-     *   contributions: [Object], a subset of the response received from GitHub
-     *   type: String, "a", "d", or "c" for additions, deletions or combined.
-     *
-     * Return:
-     *   See main description.
-     */
-    contributionsPerWeek: function(contributions, type) {
-        // calulate sum of contributions per user
-        var sums = {} // {week: total}
-        // for each user
-        for (var i = 0; i < contributions.length; i++) {
-            var weeks = contributions[i].weeks
-            // for each week
-            for (var j = 0; j < weeks.length; j++) {
-                var timestamp = weeks[j].w
-                var amount = weeks[j][type]
-                if (timestamp in sums)
-                    sums[timestamp] += amount
-                else
-                    sums[timestamp] = amount
             }
-        }
-        // convert from {week: total} to [Date, total]
-        return Object.keys(sums).map(function (timestamp) {
-            return [new Date(timestamp * 1000), sums[timestamp]]
-        })
+            onsuccess(days);
+        }).fail(function() {
+            onfail();
+        });
     },
-    /*
-     * Return contributions per week for a repoistory.
-     *
-     * Args:
-     *   owner: String, owner of the repository.
-     *   repo: String, name of the repository.
-     *   start_week: Number, earlist allowed week.
-     *   end_week: Number, most recent allowed week.
-     *   user: null|String, null to indicate all users else a specific user.
-     *   onsuccess: Function, callback to call on success.
-     *   onfail: Function, callback to call on failure.
-     *
-     * Return:
-     *   [[Date, Number]], an array of contributions per week.
-     */
-    contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
-        var tryCount = 0;
-        var self = this
-        var main = function () {
-            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
-                try{
-                    //check for empty response
-                    if(tryCount < MAX_RETRIES && $.isEmptyObject(response)){
-                        tryCount++;
-                        throw new emptyResponse();
-                    }
-                    // filter out collaborators
-                    if (user !== null)
-                        response = response.filter(function (collaborator) {
-                            return collaborator.author.login.localeCompare(user) === 0
-                        })
-                    // filter out weeks
-                    for (var i = 0; i < response.length; i++)
-                        response[i].weeks = response[i].weeks.filter(function (week) {
-                            return start_week <= week.w && week.w <= end_week
-                        })
-                    onsuccess(response)
-                }
-                catch (e) {
-                    //retry if empty response caught
-                    if (e instanceof emptyResponse) {
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail()
-            })
-        }
-        main();
+    // GET /repos/:owner/:repo/collaborators
+    commits: function(owner, repo, onsuccess, onfail) {
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/commits", function(response) {
+            onsuccess(response);
+        }).fail(function() {
+            onfail();
+        });
     },
     /**
      * GET /repos/:owner/:repo/stats/participation
      * @return {Array} Commits per week for the last year, oldest week first.
      */
-    participation: function (owner, repo, onsuccess, onfail) {
-        var tryCount = 0;
-        var main = function () {
-            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/participation", function (response) {
-                try {
-                    //check for empty response
-                    if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
-                        tryCount++;
-                        throw new emptyResponse();
-                    }
-                    onsuccess(response.all);
-                }
-                catch (e) {
-                    if (e instanceof emptyResponse) {
-                        //retry if empty response caught
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail();
-            });
-        }
-        main();
+    participation: function(owner, repo, onsuccess, onfail) {
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/participation", function(response) {
+            onsuccess(response.all);
+        }).fail(function() {
+            onfail();
+        });
     },
     /**
      * GET /users/:username
      * @return {Object} An object representing a GitHub user, with fields such as email and blog.
      */
-    user: function (username, onsuccess, onfail) {
-        var tryCount = 0;
-        var main = function () {
-            $.get("https://api.github.com/users/" + username, function (response) {
-                try {
-                    //check for empty response
-                    if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
-                        tryCount++;
-                        throw new emptyResponse;
-                    }
-                    onsuccess(response);
-                }
-                catch (e) {
-                    if (e instanceof emptyResponse) {
-                        //retry if empty response caught
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail();
-            });
-        }
-        main();
+    user: function(username, onsuccess, onfail) {
+        $.get("https://api.github.com/users/" + username, function(response) {
+            onsuccess(response);
+        }).fail(function() {
+            onfail();
+        });
     },
-    /*
-     * Return a list of a repository's issues.
-     *
-     * Args:
-     *   owner: String, owner of the repository.
-     *   repo: String, name of the repository.
-     *   milestone: String, milestone an issue must be part of.
-     *   state: String, "open", "closed" or "all"
-     *   assignee: String, username of a user an issue must be assigned to
-     *   labels: [String], array of labels that issues must be labelles as
-     *   sort: String, "created", "upadted" or "comments"
-     *   direction: String, "asc" or "desc"
-     *   max: Number, maximum amount of isses to return, null for all
-     *   onsuccess: Function, callback to call on success.
-     *   onfail: Function, callback to call on failure.
-     */
-    issues: function(owner, repo, milestone, state, assignee, labels, sort,
-                     direction, max, onsuccess, onfail) {
-        var url = "https://api.github.com/repos/" + owner + "/" + repo + "/issues"
-        url = encodeURI(url + this._paramString([
-            ["milestone", [milestone]], ["state", [state]],
-            ["assignee", [assignee]], ["labels", labels], ["sort", [sort]],
-            ["direction", [direction]]
-        ]));
-        var tryCount = 0;
-        var main = function () {
-            $.get(url, function (response) {
-                try {
-                    //check for empty response
-                    if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
-                        tryCount++;
-                        throw new emptyResponse();
-                    }
-                    onsuccess(response.slice(0, Math.min(max, response.length)));
+    //
+    // start_week, end_week: week numbers given as a Unix timestamp https://en.wikipedia.org/wiki/Unix_time
+    // start_week: if null indicated the beginning of time
+    // end_week: if null specifies now
+    // a valid week is considered to be one which begins before the end_week and after the start_week values
+    contributors: function (owner, repo, start_week, end_week, user, onsuccess, onfail) {
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/contributors", function (response) {
+            response = $.grep(response, function (collaborator, index) {                            //http://api.jquery.com/jQuery.grep/ returns array of desired contributors -- if return value is true, element is retained, else it is deleted.
+                if (user === null || collaborator.author.login === user) {                          //filter desired contributors
+                    response[index].weeks = $.grep(collaborator.weeks, function (week) {            //filter desired weeks from desired contributors
+                        return withinTime(start_week, end_week, week.w);
+                    });
                 }
-                catch (e) {
-                    if (e instanceof emptyResponse) {
-                        //retry if empty response caught
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail();
+                else return false;
+                return true;
             });
-        }
-        main();
+            onsuccess(response);
+        }).fail(function() {
+            onfail();
+        });
     },
-    punch_card: function (owner, repo, onsuccess, onfail) {
-        var tryCount = 0;
-        var main = function () {
-            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/punch_card", function (response) {
-                try {
-                    //check for empty response
-                    if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
-                        tryCount++;
-                        throw new emptyResponse();
-                    }
-                    onsuccess(response);
-                }
-                catch (e) {
-                    if (e instanceof emptyResponse) {
-                        //retry if empty response caught
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail();
-            });
-        }
-        main();
-    },
-    /* Create a URL parameter string.
-     *
-     * Args:
-     *   params: [[key, [values]]
-     *
-     * Return:
-     *   A string in the form "?keyA=valueA0?keyB=valueB0, valueB1"
-     */
-     _paramString: function(params) {
-        // remove empty values
-        for (var i = 0; i < params.length; i++)
-            params[i][1] = params[i][1].filter(function(x) {
-                return x
-            })
-        // remove parameters with no values
-        params = params.filter(function(param) {
-            return param[1].length
-        })
-        var result = "?"
-        // for each key
-        for (var i = 0; i < params.length; i++) {
-            const key = params[i][0]
-            const values = params[i][1]
-            // append "&key=""
-            result += "&" + key + "="
-            // append "value0, value1, value2" ...
-            for (var j = 0; j < values.length; j++) {
-                if (j != 0)
-                    result += ","
-                result += values[j]
+    // convert the response from `github.contributions` to [[date, total]]
+    contributionsPerWeek: function(contributors, type) {
+        var data = {}
+        for (var i in contributors) {
+            var weeks = contributors[i].weeks
+            for (var j in weeks) {
+                if (weeks[j].w in data)
+                    data[weeks[j].w] = weeks[j][type]
+                else
+                    data[weeks[j].w] += weeks[j][type]
             }
         }
-        return result
+        var points = []
+        for (var timestamp in data)
+            points.push([new Date(timestamp * 1000), data[timestamp]])
+        return points
+    },
+    // GET /repos/:owner/:repo/issues
+    // state: 1 returns OPEN issues
+    // state: -1 returns CLOSED issues
+    // state: 0 returns all issues
+    // milestone: should be an integer corresponding to the milestone number field (second milestone has 'number' = 2 etc.)
+    // milestone: null means milestones are not filtered
+    // label: a specific label name will return the issue of that label
+    // label: null means labels are not filtered
+    issues: function (owner, repo, state, milestone, label, onsuccess, onfail) {
+        var queryString = formIssueQueryString(state, milestone, label);
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/issues" + queryString, function(response) {
+            onsuccess(response);
+        }).fail(function() {
+            onfail();
+        });
+    },
+    punch_card: function (owner, repo, onsuccess, onfail) {
+        $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/punch_card", function(response) {
+            onsuccess(response);
+        }).fail(function() {
+            onfail();
+        });
     }
-}
+};
 
 // Make available to `node` for unittesting.
-module.exports = github
+module.exports = github;
