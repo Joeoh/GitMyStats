@@ -77,10 +77,27 @@
                     this.fire("showErrorMessage", {text: "Please enter a URL."});
                     return;
                 }
+                var insertString = "";
                 // Insert image of graph.
 				github.issues(owner, repo, milestone, state, assignee, labels,
                               sort, direction, max, function(response) {
                     console.log(response)
+
+                    for (var key in response) {
+                        if (response.hasOwnProperty(key)) {
+                            //console.log(key, response[key]);
+                            insertString += "Title : " + response[key].title + "\n";
+                            insertString += "State : " + response[key].state + "\n";
+                            insertString += "Description : " + response[key].body + "\n";
+                            insertString += "Created at : " + response[key].created_at + "\n";
+                            insertString += "Created by : " + response[key].user.login + "\n";
+                            if(response[key].assignee != null)
+                                insertString += "Assigned to : " + response[key].assignee.login + "\n";
+                                insertString += " \n \n";
+                                        }
+                                }
+                            insertData(insertString, "text");
+                            //console.log(insertString);
                     console.log("do something here")
                 }, function() {
                     this.fire("showErrorMessage", {text: "GitHub request failed."})
