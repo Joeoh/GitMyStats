@@ -33,8 +33,9 @@
 				if (!selectedUser) {
 					this.fire("showErrorMessage", {text: "No user given."})
                     return;
-                }
+				}
 
+				var self = this;
                 github.user(selectedUser, function(response) {
                     var responseLogin = response.login;
                     var avatar_url = response.avatar_url;
@@ -59,8 +60,12 @@
                     */
                     insertData(stringToInsert, "text");
 
-                }, function() {
-                    this.fire("showErrorMessage", {text: "Connection Failed."});
+                }, function (err) {
+                    if (typeof err !== "undefined") {
+                        self.fire("showErrorMessage", { text: "Repository Not Found" });
+                    }
+                    else
+                        self.fire("showErrorMessage", { text: "Connection Failed." });
                 });
 				console.log("tried to insert user data");
 
