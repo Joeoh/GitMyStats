@@ -24,6 +24,7 @@ function emptyResponse(){
     this.toString = this.name + ":\t" + this.message;
 }
 
+
 var github = {
     /**
      * GET /repos/:owner/:repo/stats/commit_activity
@@ -32,32 +33,32 @@ var github = {
     commit_activity: function (owner, repo, onsuccess, onfail) {
         var tryCount = 0;
         var main = function () {
-            $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function (response) {
-                try {
-                    //check for empty responses
-                    if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
-                        tryCount++;
-                        throw new emptyResponse();
+                $.get("https://api.github.com/repos/" + owner + "/" + repo + "/stats/commit_activity", function (response) {
+                    try {
+                        //check for empty responses
+                        if (tryCount < MAX_RETRIES && $.isEmptyObject(response)) {
+                            tryCount++;
+                            throw new emptyResponse();
+                        }
+                        var days = [0, 0, 0, 0, 0, 0, 0]
+                        for (var i = 0; i < response.length; i++) {
+                            for (var j = 0; j < 7; j++) {
+                                days[j] += response[i].days[j]
+                            }
+                        }
+                        onsuccess(days)
                     }
-                    var days = [0, 0, 0, 0, 0, 0, 0]
-                    for (var i = 0; i < response.length; i++) {
-                        for (var j = 0; j < 7; j++) {
-                            days[j] += response[i].days[j]
+                    catch (e) {
+                        if (e instanceof emptyResponse) {
+                            //retry if empty response caught
+                            console.error(e.toString);
+                            main();
                         }
                     }
-                    onsuccess(days)
-                }
-                catch (e) {
-                    if (e instanceof emptyResponse) {
-                        //retry if empty response caught
-                        console.error(e.toString);
-                        main();
-                    }
-                }
-            }).fail(function () {
-                onfail()
-            })
-        }
+                }).fail(function (jqXHR, status, err) {
+                    onfail(err);
+                })
+            }
         main();
     },
     /*
@@ -168,8 +169,8 @@ var github = {
                         main();
                     }
                 }
-            }).fail(function () {
-                onfail()
+            }).fail(function (jqXHR, status, err) {
+                onfail(err);
             })
         }
         main();
@@ -197,9 +198,9 @@ var github = {
                         main();
                     }
                 }
-            }).fail(function () {
-                onfail();
-            });
+            }).fail(function (jqXHR, status, err) {
+                onfail(err);
+            })
         }
         main();
     },
@@ -226,9 +227,9 @@ var github = {
                         main();
                     }
                 }
-            }).fail(function () {
-                onfail();
-            });
+            }).fail(function (jqXHR, status, err) {
+                onfail(err);
+            })
         }
         main();
     },
@@ -274,9 +275,9 @@ var github = {
                         main();
                     }
                 }
-            }).fail(function () {
-                onfail();
-            });
+            }).fail(function (jqXHR, status, err) {
+                onfail(err);
+            })
         }
         main();
     },
@@ -299,9 +300,9 @@ var github = {
                         main();
                     }
                 }
-            }).fail(function () {
-                onfail();
-            });
+            }).fail(function (jqXHR, status, err) {
+                onfail(err);
+            })
         }
         main();
     },

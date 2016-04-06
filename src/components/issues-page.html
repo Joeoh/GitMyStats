@@ -78,13 +78,18 @@
                     return;
                 }
                 // Insert image of graph.
+                var self = this;
 				github.issues(owner, repo, milestone, state, assignee, labels,
                               sort, direction, max, function(response) {
                     console.log(response)
                     console.log("do something here")
-                }, function() {
-                    this.fire("showErrorMessage", {text: "GitHub request failed."})
-                })
+                }, function (err) {
+                    if (typeof err !== "undefined") {
+                        self.fire("showErrorMessage", { text: "Repository Not Found" });
+                    }
+                    else
+                        self.fire("showErrorMessage", { text: "Connection Failed." });
+                });
             }
         });
     </script>
