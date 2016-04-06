@@ -45,10 +45,10 @@ var chart = {
    */
   weekdayCommits: function(repo, commits, type, callback) {
     var data = [
-      ["Sunday", commits[0]], ["Monday", commits[1]],
-      ["Tuesday", commits[2]], ["Wednesday", commits[3]],
-      ["Thursday", commits[4]], ["Friday", commits[5]],
-      ["Saturday", commits[6]]
+      ["Saturday", commits[6]], ["Friday", commits[5]],
+      ["Thursday", commits[4]], ["Wednesday", commits[3]],
+      ["Tuesday", commits[2]], ["Monday", commits[1]],
+      ["Sunday", commits[0]]
     ]
     //creates a string of today's date, to display on the graph title.
     var date = new Date()
@@ -110,7 +110,7 @@ var chart = {
       var dateString = date.getDate() + "/" + (date.getMonth() + 1) + "/" +
                        (date.getFullYear() + "").substring(2, 4)
       data.push([dateString, weeks[i]])
-      date.setDate(date.getDate() + 7) 
+      date.setDate(date.getDate() + 7)
     }
 
     //creates a string of today's date, to display on the graph title.
