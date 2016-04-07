@@ -257,6 +257,7 @@ var github = {
             ["assignee", [assignee]], ["labels", labels], ["sort", [sort]],
             ["direction", [direction]]
         ]));
+        console.log(url);
         var tryCount = 0;
         var main = function () {
             $.get(url, function (response) {

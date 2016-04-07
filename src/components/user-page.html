@@ -8,10 +8,6 @@
             <div>
                 <input  id="selectedUser" placeholder="eg, joeoh" class="ms-TextField-field">
             </div>
-            <div class="ms-TextField">
-                <label class="ms-Label">Single Repository?</label>
-                <input  id="repositoryURL" placeholder="joeoh/GitMyStats" class="ms-TextField-field">
-            </div>
             <button-pair></button-pair>
         </form>
     </template>
@@ -23,9 +19,6 @@
                 "button-pair-insert": "insert"
             },
             insert: function() {
-                //if this is empty do graph for all repos for this user
-                var url = this.$.repositoryURL.value
-                console.log(url)
 
                 var selectedUser = this.$.selectedUser.value
                 console.log(selectedUser)

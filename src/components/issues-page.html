@@ -9,9 +9,6 @@
             <label class="ms-Label">Owner and Repo</label>
             <input id="repoOwner" value="{{repo::input}}" class="ms-TextField-field">
         </div>
-        <!-- milestone -->
-        <label class="ms-Label">Milestone</label>
-        <input id="milestone" placeholder="Optional" class="ms-TextField-field">
         <!-- state: open, closed or all -->
         <label class="ms-Label">Opened, Closed or All</label>
         <select id="state">
@@ -63,7 +60,7 @@
                 const url = this.$.repoOwner.value
                 const owner = url.split("/")[0]
                 const repo = url.split("/")[1]
-                const milestone = this.$.milestone.value
+                const milestone = null
                 const state = this.$.state.value
                 const assignee = this.$.assignee.value
                 const labels = this.$.labels.value.split(",").map(function(label) {
@@ -77,11 +74,28 @@
                     this.fire("showErrorMessage", {text: "Please enter a URL."});
                     return;
                 }
+                var insertString = "";
                 // Insert image of graph.
                 var self = this;
 				github.issues(owner, repo, milestone, state, assignee, labels,
                               sort, direction, max, function(response) {
                     console.log(response)
+
+                    for (var key in response) {
+                        if (response.hasOwnProperty(key)) {
+                            //console.log(key, response[key]);
+                            insertString += "Title : " + response[key].title + "\n";
+                            insertString += "State : " + response[key].state + "\n";
+                            insertString += "Description : " + response[key].body + "\n";
+                            insertString += "Created at : " + response[key].created_at + "\n";
+                            insertString += "Created by : " + response[key].user.login + "\n";
+                            if(response[key].assignee != null)
+                                insertString += "Assigned to : " + response[key].assignee.login + "\n";
+                                insertString += " \n \n";
+                                        }
+                                }
+                            insertData(insertString, "text");
+                            console.log(insertString);
                     console.log("do something here")
                 }, function (err) {
                     if (typeof err !== "undefined") {
