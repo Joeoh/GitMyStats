@@ -2,10 +2,10 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TaskPaneApp">
   <Id>ade53e86-cf0b-4059-b911-3e811024680f</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>[Provider name]</ProviderName>
+  <ProviderName>GitMyStats</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="GitMyStats"/>
-  <Description DefaultValue="[Task pane Add-in description]"/>
+  <Description DefaultValue="Display Github graphs in your Office documents"/>
   <Hosts>
     <Host Name="Document"/>
     <Host Name="Workbook"/>

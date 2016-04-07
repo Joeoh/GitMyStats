@@ -20,7 +20,17 @@ function insertData(data, type) {
     }
 
     console.log("Inserting: " + coercionType);
-    if (client == "Word") {
+    if (client == "Word" || client == "PowerPoint") {
+
+
+        if (Office.context.requirements.isSetSupported('ImageCoercion', '1.1')) {
+            console.log("Is supported");
+            // insertViaImageCoercion();
+        } else {
+            console.log("Is not supported");
+        }
+
+
         Office.context.document.setSelectedDataAsync(data, {coercionType: coercionType} , (res) => {
             if (res.status === 'failed') {
                 if(res.error.name == "Data Write Error"){
