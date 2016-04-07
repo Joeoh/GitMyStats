@@ -34,13 +34,18 @@
                     return;
                 }
                 // Insert image of graph.
+                var self = this;
                 github.punch_card(owner, repo, function(response) {
                     chart.punch_card(response, function(base64Image) {
                         insertData(base64Image.replace("data:image/png;base64,",""), "image");
                     })
-                }, function() {
-                    this.fire("showErrorMessage", {text: "Connection Failed."})
-                })
+                }, function (err) {
+                    if (typeof err !== "undefined") {
+                        self.fire("showErrorMessage", { text: "Repository Not Found" });
+                    }
+                    else
+                        self.fire("showErrorMessage", { text: "Connection Failed." });
+                });
             }
         });
     </script>

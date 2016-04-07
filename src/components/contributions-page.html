@@ -110,6 +110,7 @@
                     this.fire("showErrorMessage", {text: "No user given."});
                     return;
                 }
+                var self = this;
 				github.contributors(owner, repo, unixStartDate, unixEndDate, selectedUser, function(response) {
                     if (chartType === "pie") {
                         response = github.contributionsPerUser(response, mode)
@@ -123,9 +124,13 @@
                             insertData(base64Image.replace("data:image/png;base64,", ""), "image")
                         })
                     }
-				}, function() {
-                    this.fire("showErrorMessage", {text: "Connection Failed."})
-                })
+				}, function (err) {
+				    if (typeof err !== "undefined") {
+				        self.fire("showErrorMessage", { text: "Repository Not Found" });
+				    }
+				    else
+				        self.fire("showErrorMessage", { text: "Connection Failed." });
+				});
             },
             // Show or hide the user input field depending on the value of the
             // #userSelect dropdown.

@@ -84,16 +84,19 @@
                 }
                                         this.fire("showErrorMessage", {text: ""});
 
+                var self = this;
                 // graph of commits by weekday
 				if (mode == "weekday") {
-
-                    var self = this;
-					github.commit_activity(owner, repo, function(response) {
-						chart.weekdayCommits(repo, response, chartType, function(base64Image) {
-							insertData(base64Image.replace("data:image/png;base64,",""), "image");
-						})
-					}, function() {
-                        this.fire("showErrorMessage", {text: "Connection Failed."})
+                    github.commit_activity(owner, repo, function (response) {
+                            chart.weekdayCommits(repo, response, chartType, function(base64Image) {
+                                insertData(base64Image.replace("data:image/png;base64,",""), "image");
+                            })
+                    }, function (err) {
+                        if (typeof err !== 'undefined') {
+                            self.fire("showErrorMessage", {text: "Repository Not Found"})
+                        }
+                        else
+                            self.fire("showErrorMessage", {text: "Connection Failed. bloop"})
                     });
 				}
                 // graph of commits by week
@@ -102,8 +105,12 @@
 						chart.weeklyCommits(repo, response, chartType, function(base64Image) {
                             insertData(base64Image.replace("data:image/png;base64,",""), "image");
                         })
-					}, function() {
-                        this.fire("showErrorMessage", {text: "Connection Failed."});
+					}, function (err) {
+					    if(typeof err !== "undefined"){
+					        self.fire("showErrorMessage", { text: "Repository Not Found"});
+					    }
+                        else
+                            self.fire("showErrorMessage", {text: "Connection Failed."});
                     });
 				}
                 //graph of commits by week, for a specified range of weeks. from This Week to X Weeks ago.
@@ -120,8 +127,12 @@
                             chart.dateRangeCommits(repo, response, chartType, weeksToDo, function(base64Image){
                                 insertData(base64Image.replace("data:image/png;base64,",""), "image");
                             })  //calls the chart making function that has an extra parameter for how many weeks back it wants.
-                        }, function() {
-                            this.fire("showErrorMessage", {text: "Connection Failed."});
+                        }, function (err) {
+                            if (typeof err !== "undefined") {
+                                self.fire("showErrorMessage", { text: "Repository Not Found" });
+                            }
+                            else
+                                self.fire("showErrorMessage", { text: "Connection Failed." });
                         });
                     }
                 }
